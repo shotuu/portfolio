@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { projects } from '../data/projects';
+
+const featured = projects.filter(p => p.featured);
+const other = projects.filter(p => !p.featured);
+---
+
+<BaseLayout title="Projects">
+  <section class="section">
+    <div class="container">
+      <h1>Projects</h1>
+      <p class="page-subtitle">I love building things. Here are some of them.</p>
+
+      {featured.length > 0 && (
+        <div class="project-section">
+          <h3 class="project-section__title">Featured</h3>
+          <div class="projects-grid">
+            {featured.map(project => (
+              <div class="card project-card project-card--featured">
+                <div class="project-card__header">
+                  <h3 class="card__title">{project.title}</h3>
+                  {project.featured && <span class="badge badge--accent">Featured</span>}
+                </div>
+                <p class="card__description">{project.description}</p>
+                <div class="card__tags">
+                  {project.tags.map(tag => <span class="badge">{tag}</span>)}
+                </div>
+                <div class="project-card__links">
+                  {project.github && (
+                    <a href={project.github} class="project-link" target="_blank" rel="noopener">
+                      GitHub &nearr;
+                    </a>
+                  )}
+                  {project.link && project.link !== '#' && (
+                    <a href={project.link} class="project-link" target="_blank" rel="noopener">
+                      Live Demo &nearr;
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {other.length > 0 && (
+        <div class="project-section">
+          <h3 class="project-section__title">Other Projects</h3>
+          <div class="projects-grid">
+            {other.map(project => (
+              <div class="card project-card">
+                <h3 class="card__title">{project.title}</h3>
+                <p class="card__description">{project.description}</p>
+                <div class="card__tags">
+                  {project.tags.map(tag => <span class="badge">{tag}</span>)}
+                </div>
+                <div class="project-card__links">
+                  {project.github && (
+                    <a href={project.github} class="project-link" target="_blank" rel="noopener">
+                      GitHub &nearr;
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-subtitle {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-3xl);
+    font-size: 1.0625rem;
+  }
+
+  .project-section {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .project-section__title {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-lg);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .project-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .project-card--featured {
+    border-color: var(--accent-blue-soft);
+  }
+
+  .project-card__links {
+    display: flex;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-light);
+  }
+
+  .project-link {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    transition: color var(--transition-fast);
+  }
+
+  .project-link:hover {
+    color: var(--accent-blue);
+  }
+
+  @media (max-width: 640px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

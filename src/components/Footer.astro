@@ -1,0 +1,55 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-content">
+      <p class="footer-text">
+        <span class="footer-name">Daniel Wu</span>
+        <span class="footer-sep">/</span>
+        <span class="footer-year">{year}</span>
+      </p>
+      <p class="footer-sub">Shipped from Los Angeles &#127796;</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border-light);
+    padding: var(--space-2xl) 0;
+    margin-top: var(--space-4xl);
+  }
+
+  .footer-content {
+    text-align: center;
+  }
+
+  .footer-text {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    max-width: none;
+  }
+
+  .footer-name {
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .footer-sep {
+    color: var(--border);
+  }
+
+  .footer-sub {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: var(--space-xs);
+    max-width: none;
+  }
+</style>

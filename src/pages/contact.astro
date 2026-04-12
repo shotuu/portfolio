@@ -1,0 +1,217 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact">
+  <section class="section">
+    <div class="container">
+      <h1>Contact</h1>
+      <p class="page-subtitle">Want to chat? I'd love to hear from you.</p>
+
+      <div class="contact-grid">
+        <a href="mailto:wuscdaniel@ucla.edu" class="contact-card contact-card--emerald">
+          <span class="contact-card__icon">&#128231;</span>
+          <h3 class="contact-card__title">Email</h3>
+          <p class="contact-card__value">wuscdaniel@ucla.edu</p>
+          <span class="contact-card__arrow">&rarr;</span>
+        </a>
+
+        <a href="https://github.com/shotuu" target="_blank" rel="noopener" class="contact-card contact-card--violet">
+          <span class="contact-card__icon">&#128187;</span>
+          <h3 class="contact-card__title">GitHub</h3>
+          <p class="contact-card__value">@shotuu</p>
+          <span class="contact-card__arrow">&rarr;</span>
+        </a>
+
+        <a href="https://linkedin.com/in/wuscdaniel" target="_blank" rel="noopener" class="contact-card contact-card--blue">
+          <span class="contact-card__icon">&#128101;</span>
+          <h3 class="contact-card__title">LinkedIn</h3>
+          <p class="contact-card__value">/in/wuscdaniel</p>
+          <span class="contact-card__arrow">&rarr;</span>
+        </a>
+      </div>
+
+      <div class="contact-note">
+        <p>
+          Feel free to reach out. I typically respond within a day.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-subtitle {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-3xl);
+    font-size: 1.0625rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-3xl);
+  }
+
+  .contact-card {
+    --card-accent: var(--accent-blue);
+    --card-accent-soft: var(--accent-blue-soft);
+    --card-accent-glow: var(--accent-blue-glow);
+    position: relative;
+    isolation: isolate;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-2xl) var(--space-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .contact-card--blue {
+    --card-accent: var(--accent-blue);
+    --card-accent-soft: var(--accent-blue-soft);
+    --card-accent-glow: var(--accent-blue-glow);
+  }
+
+  .contact-card--violet {
+    --card-accent: var(--accent-violet);
+    --card-accent-soft: var(--accent-violet-soft);
+    --card-accent-glow: var(--accent-violet-glow);
+  }
+
+  .contact-card--emerald {
+    --card-accent: var(--accent-emerald);
+    --card-accent-soft: var(--accent-emerald-soft);
+    --card-accent-glow: var(--accent-emerald-glow);
+  }
+
+  /* Animated gradient border via masked pseudo-element (matches CTA) */
+  .contact-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--contact-angle, 0deg),
+      var(--card-accent),
+      transparent 25%,
+      transparent 75%,
+      var(--card-accent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+
+  /* Soft radial glow that brightens on hover */
+  .contact-card::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: 140%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
+    transform: translate(-50%, -30%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    z-index: -1;
+  }
+
+  @property --contact-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes contactSpin {
+    to { --contact-angle: 360deg; }
+  }
+
+  .contact-card:hover {
+    transform: translateY(-4px);
+    border-color: transparent;
+    box-shadow: 0 12px 32px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
+  }
+
+  .contact-card:hover::before {
+    opacity: 1;
+    animation: contactSpin 4s linear infinite;
+  }
+
+  .contact-card:hover::after {
+    opacity: 0.7;
+  }
+
+  .contact-card__icon {
+    font-size: 2rem;
+    transition: transform var(--transition-base);
+  }
+
+  .contact-card:hover .contact-card__icon {
+    transform: scale(1.1) translateY(-2px);
+  }
+
+  .contact-card__title {
+    font-size: 1rem;
+    font-family: var(--font-display);
+    margin: 0;
+    transition: color var(--transition-base);
+  }
+
+  .contact-card:hover .contact-card__title {
+    color: var(--card-accent);
+  }
+
+  .contact-card__value {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    transition: color var(--transition-base);
+    max-width: none;
+  }
+
+  .contact-card:hover .contact-card__value {
+    color: var(--text-secondary);
+  }
+
+  .contact-card__arrow {
+    font-family: var(--font-mono);
+    font-size: 1.125rem;
+    color: var(--card-accent);
+    margin-top: var(--space-xs);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity var(--transition-base), transform var(--transition-base);
+  }
+
+  .contact-card:hover .contact-card__arrow {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .contact-note {
+    text-align: center;
+    max-width: 50ch;
+    margin: 0 auto;
+  }
+
+  .contact-note p {
+    font-size: 0.9375rem;
+    color: var(--text-tertiary);
+    max-width: none;
+  }
+</style>

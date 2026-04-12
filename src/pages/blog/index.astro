@@ -1,0 +1,189 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+
+// Get all blog posts
+const postModules = import.meta.glob('../../content/blog/*.md', { eager: true });
+const allPosts = Object.values(postModules) as any[];
+const posts = allPosts
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+---
+
+<BaseLayout title="Blog">
+  <section class="section">
+    <div class="container">
+      <h1>Blog</h1>
+      <p class="page-subtitle">
+        Thoughts on CS, security, and things I've learned along the way.
+      </p>
+
+      {posts.length === 0 ? (
+        <div class="empty-state">
+          <p class="empty-state__icon">&#9998;</p>
+          <p class="empty-state__text">No posts yet. Check back soon!</p>
+        </div>
+      ) : (
+        <div class="posts-list">
+          {posts.map(post => (
+            <a href={`${base}/blog/${post.frontmatter.slug}`} class="post-item">
+              <div class="post-item__meta">
+                <time datetime={post.frontmatter.date}>
+                  {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </time>
+              </div>
+              <h3 class="post-item__title">{post.frontmatter.title}</h3>
+              {post.frontmatter.description && (
+                <p class="post-item__desc">{post.frontmatter.description}</p>
+              )}
+              {post.frontmatter.tags && (
+                <div class="card__tags">
+                  {post.frontmatter.tags.map((tag: string) => (
+                    <span class="badge">{tag}</span>
+                  ))}
+                </div>
+              )}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-subtitle {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-3xl);
+    font-size: 1.0625rem;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .post-item {
+    --card-accent: var(--accent-blue);
+    --card-accent-soft: var(--accent-blue-soft);
+    --card-accent-glow: var(--accent-blue-glow);
+    position: relative;
+    isolation: isolate;
+    text-decoration: none;
+    display: block;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    overflow: hidden;
+    transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  /* Spinning gradient border */
+  .post-item::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--post-angle, 0deg),
+      var(--card-accent),
+      transparent 25%,
+      transparent 75%,
+      var(--card-accent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+  }
+
+  /* Soft radial glow */
+  .post-item::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 50%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
+    transform: translate(-20%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+    z-index: -1;
+  }
+
+  @property --post-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  @keyframes postSpin {
+    to { --post-angle: 360deg; }
+  }
+
+  .post-item:hover {
+    transform: translateY(-3px);
+    border-color: transparent;
+    box-shadow: 0 12px 32px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
+  }
+
+  .post-item:hover::before {
+    opacity: 1;
+    animation: postSpin 4s linear infinite;
+  }
+
+  .post-item:hover::after {
+    opacity: 0.6;
+  }
+
+  .post-item__meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-sm);
+  }
+
+  .post-item__title {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+    transition: color var(--transition-fast);
+  }
+
+  .post-item:hover .post-item__title {
+    color: var(--accent-blue);
+  }
+
+  .post-item__desc {
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-4xl);
+    color: var(--text-tertiary);
+  }
+
+  .empty-state__icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .empty-state__text {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+</style>

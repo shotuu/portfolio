@@ -1,0 +1,532 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Pet from '../components/Pet.astro';
+import PointsDisplay from '../components/PointsDisplay.astro';
+import Shop from '../components/Shop.astro';
+import EasterEggs from '../components/EasterEggs.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Daniel Wu — CS student, builder, hacker." } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} — Daniel Wu</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>D</text></svg>" />
+  <script is:inline>
+    (function() {
+      try {
+        var theme = localStorage.getItem('dw_theme');
+        if (theme) document.documentElement.setAttribute('data-theme', theme);
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+  <canvas id="matrix-canvas" class="matrix-canvas"></canvas>
+
+  <Header />
+  <PointsDisplay />
+  <Shop />
+
+  <main>
+    <slot />
+  </main>
+
+  <Footer />
+  <Pet />
+  <EasterEggs />
+
+  <!-- Gamification Engine -->
+  <script>
+    // ========== POINTS SYSTEM ==========
+    const SHOP_ITEMS = {
+      customCursor: { name: 'Hacker Cursor', cost: 20, icon: '⌖', description: 'Crosshair cursor for that hacker feel' },
+      confetti: { name: 'Confetti Button', cost: 25, icon: '🎉', description: 'Celebrate with confetti on demand' },
+      matrixRain: { name: 'Matrix Rain', cost: 50, icon: '⟩', description: 'Digital rain background effect' },
+      secretPage: { name: 'Secret Page', cost: 100, icon: '🔐', description: 'Unlock a hidden page on the site' },
+    };
+
+    // Cosmetic items (separate from shop — managed on /cosmetics page)
+    const COSMETIC_ITEMS = {
+      // Head
+      petHat: { name: 'Top Hat', cost: 15, icon: '🎩', description: 'A tiny top hat', category: 'head' },
+      catCrown: { name: 'Crown', cost: 20, icon: '👑', description: 'A golden crown fit for royalty', category: 'head' },
+      catBeret: { name: 'Beret', cost: 18, icon: '🫐', description: 'A chic French beret', category: 'head' },
+      catWizardHat: { name: 'Wizard Hat', cost: 35, icon: '🧙', description: 'A mystical pointy hat', category: 'head' },
+      catFlowerCrown: { name: 'Flower Crown', cost: 22, icon: '🌺', description: 'A crown of fresh flowers', category: 'head' },
+      // Face
+      catSunglasses: { name: 'Sunglasses', cost: 10, icon: '😎', description: 'Cool shades for a cool cat', category: 'face' },
+      catMonocle: { name: 'Monocle', cost: 18, icon: '🧐', description: 'Distinguished and refined', category: 'face' },
+      catBlush: { name: 'Blush', cost: 8, icon: '☺️', description: 'Rosy pink cheeks', category: 'face' },
+      // Neck
+      catBowtie: { name: 'Bowtie', cost: 12, icon: '🎀', description: 'A dapper red bowtie', category: 'neck' },
+      catScarf: { name: 'Scarf', cost: 15, icon: '🧣', description: 'A cozy blue scarf', category: 'neck' },
+      catBandana: { name: 'Bandana', cost: 14, icon: '🔴', description: 'A cool red bandana', category: 'neck' },
+      catBell: { name: 'Bell Collar', cost: 10, icon: '🔔', description: 'A jingling bell collar', category: 'neck' },
+      // Back
+      catCape: { name: 'Cape', cost: 25, icon: '🦸', description: 'A heroic flowing cape', category: 'back' },
+      catWings: { name: 'Angel Wings', cost: 40, icon: '👼', description: 'Tiny feathered wings', category: 'back' },
+      catBatWings: { name: 'Bat Wings', cost: 35, icon: '🦇', description: 'Spooky bat wings', category: 'back' },
+      // Fur
+      catPinkFur: { name: 'Pink Fur', cost: 25, icon: '🌸', description: 'Soft pink tinted fur', category: 'fur' },
+      catGoldFur: { name: 'Gold Fur', cost: 30, icon: '⭐', description: 'Golden shimmering fur', category: 'fur' },
+      catLavenderFur: { name: 'Lavender Fur', cost: 28, icon: '💜', description: 'Dreamy lavender fur', category: 'fur' },
+      catMintFur: { name: 'Mint Fur', cost: 28, icon: '🍃', description: 'Fresh minty green fur', category: 'fur' },
+      catSkyFur: { name: 'Sky Blue Fur', cost: 28, icon: '🩵', description: 'Calm sky blue fur', category: 'fur' },
+    };
+
+    const COSMETIC_CATEGORIES = {
+      head: 'Head',
+      face: 'Face',
+      neck: 'Neck',
+      back: 'Back',
+      fur: 'Fur Color',
+    };
+
+    // Make cosmetics accessible globally for the cosmetics page
+    window.COSMETIC_ITEMS = COSMETIC_ITEMS;
+    window.COSMETIC_CATEGORIES = COSMETIC_CATEGORIES;
+
+    class GameState {
+      constructor() {
+        this.load();
+        this.setupFirstVisitBonus();
+      }
+
+      load() {
+        try {
+          const saved = JSON.parse(localStorage.getItem('dw_gamestate') || '{}');
+          this.points = saved.points || 0;
+          this.totalEarned = saved.totalEarned || 0;
+          this.unlocked = saved.unlocked || [];
+          this.easterEggsFound = saved.easterEggsFound || [];
+          this.pagesVisited = saved.pagesVisited || [];
+          this.petClicks = saved.petClicks || 0;
+          this.activeFur = saved.activeFur || null;
+          this.equipped = saved.equipped || { head: null, face: null, neck: null, back: null, fur: null };
+          // Toggleable effects: default to "on" for anything already unlocked (backwards compat)
+          this.active = saved.active || {};
+        } catch {
+          this.points = 0;
+          this.totalEarned = 0;
+          this.unlocked = [];
+          this.easterEggsFound = [];
+          this.pagesVisited = [];
+          this.petClicks = 0;
+          this.activeFur = null;
+          this.equipped = { head: null, face: null, neck: null, back: null, fur: null };
+          this.active = {};
+        }
+        // Dark mode is free for everyone — auto-unlock on every load.
+        if (!this.unlocked.includes('darkMode')) {
+          this.unlocked.push('darkMode');
+        }
+      }
+
+      save() {
+        localStorage.setItem('dw_gamestate', JSON.stringify({
+          points: this.points,
+          totalEarned: this.totalEarned,
+          unlocked: this.unlocked,
+          easterEggsFound: this.easterEggsFound,
+          pagesVisited: this.pagesVisited,
+          petClicks: this.petClicks,
+          activeFur: this.activeFur,
+          equipped: this.equipped,
+          active: this.active,
+        }));
+        this.updateUI();
+      }
+
+      // Check if a toggleable effect is currently on. Defaults to true (backwards compat).
+      isActive(itemId) {
+        return this.active[itemId] !== false;
+      }
+
+      addPoints(amount, x, y) {
+        this.points += amount;
+        this.totalEarned += amount;
+        this.save();
+        this.showPointsToast(amount, x, y);
+      }
+
+      spendPoints(amount) {
+        if (this.points >= amount) {
+          this.points -= amount;
+          this.save();
+          return true;
+        }
+        return false;
+      }
+
+      isUnlocked(itemId) {
+        return this.unlocked.includes(itemId);
+      }
+
+      unlock(itemId) {
+        if (!this.unlocked.includes(itemId)) {
+          this.unlocked.push(itemId);
+          this.save();
+          this.applyUnlock(itemId);
+        }
+      }
+
+      applyUnlock(itemId) {
+        // Non-cosmetic unlocks. Idempotent — safe to call multiple times.
+        switch (itemId) {
+          case 'darkMode':
+            document.querySelector('.theme-toggle')?.classList.add('unlocked');
+            break;
+          case 'customCursor':
+            if (this.isActive('customCursor')) this.startCustomCursor();
+            break;
+          case 'matrixRain':
+            if (this.isActive('matrixRain')) {
+              document.body.classList.add('matrix-active');
+              this.startMatrixRain();
+            }
+            break;
+          case 'confetti':
+            document.querySelector('.confetti-btn')?.classList.add('visible');
+            break;
+          case 'secretPage':
+            document.querySelector('.secret-nav-link')?.classList.add('visible');
+            break;
+        }
+      }
+
+      // Equip a cosmetic item (unequips current item in same category)
+      equip(itemId) {
+        const item = COSMETIC_ITEMS[itemId];
+        if (!item || !this.isUnlocked(itemId)) return;
+        // Unequip current item in this category
+        this.unequipCategory(item.category);
+        this.equipped[item.category] = itemId;
+        this.save();
+        this.applyCosmetics();
+      }
+
+      // Unequip a specific item
+      unequip(itemId) {
+        const item = COSMETIC_ITEMS[itemId];
+        if (!item) return;
+        if (this.equipped[item.category] === itemId) {
+          this.equipped[item.category] = null;
+          this.save();
+          this.applyCosmetics();
+        }
+      }
+
+      // Unequip everything in a category
+      unequipCategory(category) {
+        this.equipped[category] = null;
+      }
+
+      // Apply all equipped cosmetics to the pet
+      applyCosmetics() {
+        // Reset all cosmetics
+        document.querySelectorAll('.pet-hat, .pet-crown, .pet-beret, .pet-wizard-hat, .pet-flower-crown, .pet-bowtie, .pet-scarf, .pet-bandana, .pet-bell, .pet-cape, .pet-wings, .pet-bat-wings').forEach(el => el.classList.remove('visible'));
+        const sg = document.getElementById('cat-sunglasses');
+        if (sg) sg.style.display = 'none';
+        const monocle = document.getElementById('cat-monocle');
+        if (monocle) monocle.style.display = 'none';
+        const blush = document.getElementById('cat-blush');
+        if (blush) blush.style.display = 'none';
+        // Reset fur
+        (window as any).setPetFurColor?.('#ffffff');
+        this.activeFur = null;
+
+        // Apply equipped items
+        for (const [category, itemId] of Object.entries(this.equipped)) {
+          if (!itemId) continue;
+          switch (itemId) {
+            // Head
+            case 'petHat':
+              document.querySelector('.pet-hat')?.classList.add('visible');
+              break;
+            case 'catCrown':
+              document.querySelector('.pet-crown')?.classList.add('visible');
+              break;
+            case 'catBeret':
+              document.querySelector('.pet-beret')?.classList.add('visible');
+              break;
+            case 'catWizardHat':
+              document.querySelector('.pet-wizard-hat')?.classList.add('visible');
+              break;
+            case 'catFlowerCrown':
+              document.querySelector('.pet-flower-crown')?.classList.add('visible');
+              break;
+            // Face
+            case 'catSunglasses':
+              const sge = document.getElementById('cat-sunglasses');
+              if (sge) sge.style.display = 'block';
+              break;
+            case 'catMonocle':
+              const mon = document.getElementById('cat-monocle');
+              if (mon) mon.style.display = 'block';
+              break;
+            case 'catBlush':
+              const bl = document.getElementById('cat-blush');
+              if (bl) bl.style.display = 'block';
+              break;
+            // Neck
+            case 'catBowtie':
+              document.querySelector('.pet-bowtie')?.classList.add('visible');
+              break;
+            case 'catScarf':
+              document.querySelector('.pet-scarf')?.classList.add('visible');
+              break;
+            case 'catBandana':
+              document.querySelector('.pet-bandana')?.classList.add('visible');
+              break;
+            case 'catBell':
+              document.querySelector('.pet-bell')?.classList.add('visible');
+              break;
+            // Back
+            case 'catCape':
+              document.querySelector('.pet-cape')?.classList.add('visible');
+              break;
+            case 'catWings':
+              document.querySelector('.pet-wings')?.classList.add('visible');
+              break;
+            case 'catBatWings':
+              document.querySelector('.pet-bat-wings')?.classList.add('visible');
+              break;
+            // Fur
+            case 'catPinkFur':
+              this.activeFur = '#fce4ec';
+              (window as any).setPetFurColor?.('#fce4ec');
+              break;
+            case 'catGoldFur':
+              this.activeFur = '#fef3c7';
+              (window as any).setPetFurColor?.('#fef3c7');
+              break;
+            case 'catLavenderFur':
+              this.activeFur = '#e8d5f5';
+              (window as any).setPetFurColor?.('#e8d5f5');
+              break;
+            case 'catMintFur':
+              this.activeFur = '#d1fae5';
+              (window as any).setPetFurColor?.('#d1fae5');
+              break;
+            case 'catSkyFur':
+              this.activeFur = '#dbeafe';
+              (window as any).setPetFurColor?.('#dbeafe');
+              break;
+          }
+        }
+
+        // Update cosmetics page UI if open
+        window.dispatchEvent(new CustomEvent('cosmetics-updated'));
+      }
+
+      applyAllUnlocks() {
+        this.unlocked.forEach(id => this.applyUnlock(id));
+        // Apply saved theme
+        if (this.isUnlocked('darkMode')) {
+          const savedTheme = localStorage.getItem('dw_theme');
+          if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+        // Apply equipped cosmetics
+        this.applyCosmetics();
+      }
+
+      setupFirstVisitBonus() {
+        const path = window.location.pathname;
+        if (!this.pagesVisited.includes(path)) {
+          this.pagesVisited.push(path);
+          if (this.pagesVisited.length > 1) {
+            // 5 points for visiting a new page (not the first one)
+            setTimeout(() => this.addPoints(5, window.innerWidth / 2, 80), 500);
+          }
+          this.save();
+        }
+      }
+
+      showPointsToast(amount, x, y) {
+        const toast = document.createElement('div');
+        toast.className = 'points-toast';
+        toast.textContent = `+${amount}`;
+        toast.style.left = `${x}px`;
+        toast.style.top = `${y}px`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 1200);
+      }
+
+      updateUI() {
+        const pointsEl = document.querySelector('.points-count');
+        if (pointsEl) pointsEl.textContent = this.points;
+
+        // Update shop button states
+        const toggleable = ['matrixRain', 'customCursor'];
+        document.querySelectorAll('.shop-item').forEach(el => {
+          const itemId = el.dataset.item;
+          if (!itemId) return;
+          const btn = el.querySelector('.shop-item__btn');
+          if (!btn) return;
+          if (this.isUnlocked(itemId)) {
+            el.classList.add('purchased');
+            if (toggleable.includes(itemId)) {
+              // Show toggle state for on/off effects
+              const on = this.isActive(itemId);
+              btn.textContent = on ? 'On' : 'Off';
+              el.classList.toggle('effect-on', on);
+              el.classList.toggle('effect-off', !on);
+            } else {
+              btn.textContent = 'Owned';
+            }
+          }
+        });
+      }
+
+      startMatrixRain() {
+        // Idempotent: if already running, do nothing. This prevents the
+        // double-start glitch that happens because applyAllUnlocks() is called
+        // twice per page load (once immediately, once on DOMContentLoaded).
+        if (this._matrixRafId) return;
+
+        const canvas = document.getElementById('matrix-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d', { alpha: true });
+        // Render at half resolution: the canvas opacity is 0.15 so the upscale
+        // is invisible, and we cut per-frame paint cost by 4x. Big win on
+        // Retina displays where the default fills 4x more pixels per frame.
+        const scale = 0.5;
+        const setSize = () => {
+          canvas.width = Math.floor(window.innerWidth * scale);
+          canvas.height = Math.floor(window.innerHeight * scale);
+        };
+        setSize();
+
+        const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+        const fontSize = 10;
+        let columns = Math.floor(canvas.width / fontSize);
+        let drops = Array(columns).fill(1);
+        const frameInterval = 60; // ~16fps — fast enough to feel like rain, slow enough to be cheap
+
+        // Cache the fade color so we don't hit getComputedStyle every frame
+        const isDark = () =>
+          document.documentElement.getAttribute('data-theme') === 'dark' ||
+          getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim() === '#0a0a0a';
+        let fadeColor = isDark() ? 'rgba(10, 10, 10, 0.05)' : 'rgba(250, 250, 250, 0.05)';
+        const refreshFadeColor = () => {
+          fadeColor = isDark() ? 'rgba(10, 10, 10, 0.05)' : 'rgba(250, 250, 250, 0.05)';
+        };
+
+        let lastDraw = 0;
+        const tick = (now) => {
+          if (now - lastDraw >= frameInterval) {
+            lastDraw = now;
+            ctx.fillStyle = fadeColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#10b981';
+            ctx.font = `${fontSize}px monospace`;
+            for (let i = 0; i < drops.length; i++) {
+              const text = chars[Math.floor(Math.random() * chars.length)];
+              ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+              if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+              }
+              drops[i]++;
+            }
+          }
+          this._matrixRafId = requestAnimationFrame(tick);
+        };
+        this._matrixRafId = requestAnimationFrame(tick);
+
+        // Store handler refs so we can remove them in stopMatrixRain()
+        this._matrixResizeHandler = () => {
+          setSize();
+          columns = Math.floor(canvas.width / fontSize);
+          drops = Array(columns).fill(1);
+        };
+        // On theme change, refresh the fade color AND wipe the canvas. Without
+        // the wipe, old fade-rect trails from the previous theme stay painted
+        // and show through the canvas's 0.15 opacity — e.g. switching light→dark
+        // leaves a gray haze instead of black.
+        this._matrixThemeHandler = () => {
+          refreshFadeColor();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        };
+        window.addEventListener('resize', this._matrixResizeHandler);
+        window.addEventListener('theme-changed', this._matrixThemeHandler);
+      }
+
+      stopMatrixRain() {
+        if (this._matrixRafId) {
+          cancelAnimationFrame(this._matrixRafId);
+          this._matrixRafId = null;
+        }
+        if (this._matrixResizeHandler) {
+          window.removeEventListener('resize', this._matrixResizeHandler);
+          this._matrixResizeHandler = null;
+        }
+        if (this._matrixThemeHandler) {
+          window.removeEventListener('theme-changed', this._matrixThemeHandler);
+          this._matrixThemeHandler = null;
+        }
+        const canvas = document.getElementById('matrix-canvas');
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          ctx?.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        document.body.classList.remove('matrix-active');
+      }
+
+      startCustomCursor() {
+        document.body.classList.add('custom-cursor-active');
+      }
+
+      stopCustomCursor() {
+        document.body.classList.remove('custom-cursor-active');
+      }
+
+      // Toggle an effect that supports on/off (currently matrixRain and customCursor).
+      // Requires the item to already be unlocked.
+      toggleActive(itemId) {
+        if (!this.isUnlocked(itemId)) return;
+        const isOn = this.active[itemId] !== false;
+        this.active[itemId] = !isOn;
+        this.save();
+        if (itemId === 'matrixRain') {
+          if (this.active[itemId]) {
+            document.body.classList.add('matrix-active');
+            this.startMatrixRain();
+          } else {
+            this.stopMatrixRain();
+          }
+        } else if (itemId === 'customCursor') {
+          if (this.active[itemId]) this.startCustomCursor();
+          else this.stopCustomCursor();
+        }
+        window.dispatchEvent(new CustomEvent('shop-updated'));
+      }
+    }
+
+    // Initialize
+    const gameState = new GameState();
+    window.gameState = gameState;
+
+    // Apply unlocks after DOM loads
+    document.addEventListener('DOMContentLoaded', () => {
+      gameState.applyAllUnlocks();
+      gameState.updateUI();
+    });
+
+    // Apply immediately too (for Astro's partial hydration)
+    gameState.applyAllUnlocks();
+    gameState.updateUI();
+  </script>
+</body>
+</html>

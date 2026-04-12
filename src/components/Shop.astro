@@ -1,0 +1,380 @@
+---
+---
+
+<div class="shop-overlay" id="shop-overlay">
+  <div class="shop-panel">
+    <div class="shop-header">
+      <h3 class="shop-title">Shop</h3>
+      <p class="shop-subtitle">Spend your points on upgrades</p>
+      <button class="shop-close" id="shop-close" aria-label="Close shop">&times;</button>
+    </div>
+
+    <div class="shop-items">
+      <button class="shop-item" data-item="customCursor" data-cost="20">
+        <span class="shop-item__icon">&#8982;</span>
+        <div class="shop-item__info">
+          <span class="shop-item__name">Hacker Cursor</span>
+          <span class="shop-item__desc">Crosshair cursor for that hacker feel</span>
+        </div>
+        <span class="shop-item__btn">20 &#9733;</span>
+      </button>
+
+      <button class="shop-item" data-item="confetti" data-cost="25">
+        <span class="shop-item__icon">&#127881;</span>
+        <div class="shop-item__info">
+          <span class="shop-item__name">Confetti</span>
+          <span class="shop-item__desc">Celebrate with confetti on demand</span>
+        </div>
+        <span class="shop-item__btn">25 &#9733;</span>
+      </button>
+
+      <button class="shop-item" data-item="matrixRain" data-cost="50">
+        <span class="shop-item__icon">&#10217;</span>
+        <div class="shop-item__info">
+          <span class="shop-item__name">Matrix Rain</span>
+          <span class="shop-item__desc">Digital rain background effect</span>
+        </div>
+        <span class="shop-item__btn">50 &#9733;</span>
+      </button>
+
+      <button class="shop-item" data-item="secretPage" data-cost="100">
+        <span class="shop-item__icon">&#128272;</span>
+        <div class="shop-item__info">
+          <span class="shop-item__name">Secret Page</span>
+          <span class="shop-item__desc">Unlock a hidden page on the site</span>
+        </div>
+        <span class="shop-item__btn">100 &#9733;</span>
+      </button>
+    </div>
+
+    <div class="shop-divider">
+      <span class="shop-divider__text">Cat Cosmetics</span>
+    </div>
+
+    <div class="shop-items">
+      <a href={`${import.meta.env.BASE_URL}/cosmetics`} class="shop-item shop-cosmetics-link" id="shop-cosmetics-link">
+        <span class="shop-item__icon">&#128049;</span>
+        <div class="shop-item__info">
+          <span class="shop-item__name">Cat Wardrobe</span>
+          <span class="shop-item__desc">Browse & equip hats, glasses, scarves, and more</span>
+        </div>
+        <span class="shop-item__btn">&rarr;</span>
+      </a>
+    </div>
+
+    <div class="shop-footer">
+      <p class="shop-hint">Hint: Click the cat, explore the site, and find easter eggs to earn points!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const shopOverlay = document.getElementById('shop-overlay');
+  const shopClose = document.getElementById('shop-close');
+
+  shopClose?.addEventListener('click', () => {
+    shopOverlay?.classList.remove('open');
+  });
+
+  shopOverlay?.addEventListener('click', (e) => {
+    if (e.target === shopOverlay) shopOverlay.classList.remove('open');
+  });
+
+  // Items that can be toggled on/off after purchase
+  const TOGGLEABLE = ['matrixRain', 'customCursor'];
+
+  // Handle purchases + toggles
+  document.querySelectorAll('.shop-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const itemId = item.dataset.item;
+      const cost = parseInt(item.dataset.cost || '0');
+
+      if (!window.gameState) return;
+
+      // Already unlocked: toggle if toggleable, otherwise no-op
+      if (window.gameState.isUnlocked(itemId)) {
+        if (TOGGLEABLE.includes(itemId)) {
+          window.gameState.toggleActive(itemId);
+        }
+        return;
+      }
+
+      // Not unlocked: try to purchase
+      if (window.gameState.spendPoints(cost)) {
+        window.gameState.unlock(itemId);
+        item.classList.add('purchased');
+        // Flash effect
+        item.style.borderColor = 'var(--accent-emerald)';
+        setTimeout(() => item.style.borderColor = '', 1000);
+        // Let updateUI() set the label (handles both "Owned" and "On/Off")
+        window.gameState.updateUI();
+      } else {
+        // Not enough points — shake
+        item.classList.add('shake');
+        setTimeout(() => item.classList.remove('shake'), 400);
+      }
+    });
+  });
+
+  // Re-render shop state when gameState changes
+  window.addEventListener('shop-updated', () => {
+    window.gameState?.updateUI();
+  });
+</script>
+
+<style>
+  .shop-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+  }
+
+  .shop-overlay.open {
+    display: flex;
+  }
+
+  .shop-panel {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    max-width: 420px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shop-header {
+    position: relative;
+    padding: var(--space-xl) var(--space-xl) var(--space-md);
+  }
+
+  .shop-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .shop-subtitle {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    margin-top: var(--space-xs);
+  }
+
+  .shop-close {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+  }
+
+  .shop-close:hover {
+    color: var(--text-primary);
+  }
+
+  .shop-items {
+    padding: 0 var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .shop-item {
+    --card-accent: var(--points-color);
+    --card-accent-soft: var(--accent-orange-soft);
+    --card-accent-glow: var(--accent-orange-glow);
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    text-align: left;
+    width: 100%;
+    color: var(--text-primary);
+  }
+
+  .shop-item::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--glow-angle, 0deg),
+      var(--card-accent),
+      transparent 25%,
+      transparent 75%,
+      var(--card-accent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .shop-item::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 40%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
+    transform: translate(-20%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    z-index: -1;
+  }
+
+  .shop-item:hover:not(.purchased) {
+    transform: translateY(-2px);
+    border-color: transparent;
+    box-shadow: 0 8px 24px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
+  }
+
+  .shop-item:hover:not(.purchased)::before {
+    opacity: 1;
+    animation: glowSpin 4s linear infinite;
+  }
+
+  .shop-item:hover:not(.purchased)::after {
+    opacity: 0.5;
+  }
+
+  .shop-item.purchased {
+    opacity: 0.75;
+    cursor: default;
+  }
+
+  /* Toggleable items stay fully interactive after purchase */
+  .shop-item.purchased.effect-on,
+  .shop-item.purchased.effect-off {
+    opacity: 1;
+    cursor: pointer;
+  }
+
+  .shop-item.purchased.effect-on:hover,
+  .shop-item.purchased.effect-off:hover {
+    border-color: var(--accent-blue);
+    background: var(--bg-primary);
+  }
+
+  .shop-item.shake {
+    animation: shake 0.4s ease;
+  }
+
+  .shop-item__icon {
+    font-size: 1.5rem;
+    width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .shop-item__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .shop-item__name {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .shop-item__desc {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  .shop-item__btn {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--points-color);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .shop-item.purchased .shop-item__btn {
+    color: var(--accent-emerald);
+  }
+
+  .shop-item.effect-on .shop-item__btn {
+    color: var(--accent-emerald);
+  }
+
+  .shop-item.effect-on .shop-item__btn::before {
+    content: '● ';
+    font-size: 0.75em;
+  }
+
+  .shop-item.effect-off .shop-item__btn {
+    color: var(--text-tertiary);
+  }
+
+  .shop-item.effect-off .shop-item__btn::before {
+    content: '○ ';
+    font-size: 0.75em;
+  }
+
+  .shop-divider {
+    padding: var(--space-lg) var(--space-xl) var(--space-sm);
+    text-align: center;
+  }
+
+  .shop-divider__text {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--bg-primary);
+    padding: 0 var(--space-md);
+    position: relative;
+  }
+
+  .shop-divider::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: var(--border-light);
+    margin-bottom: -0.5em;
+  }
+
+  .shop-footer {
+    padding: var(--space-md) var(--space-xl) var(--space-xl);
+  }
+
+  .shop-hint {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    text-align: center;
+    font-style: italic;
+  }
+</style>

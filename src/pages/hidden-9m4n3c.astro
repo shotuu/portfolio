@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Secret">
+  <section class="section">
+    <div class="container secret-page">
+      <div class="secret-locked" id="secret-locked">
+        <h1>&#128274;</h1>
+        <p>This page is locked.</p>
+        <p class="secret-hint">Unlock it from the shop for 100 points.</p>
+        <a href={base} class="btn">Go Home</a>
+      </div>
+
+      <div class="secret-content" id="secret-content" style="display: none;">
+        <h1>You found the secret page!</h1>
+        <p class="secret-congrats">
+          Congrats, you're clearly someone who doesn't give up easily.
+        </p>
+
+        <div class="secret-ascii">
+          <pre>{`  /\\_/\\
+ ( o.o )
+  > ^ <
+ /|   |\\
+(_|   |_)`}</pre>
+          <p class="secret-caption">Here's a cat for your troubles.</p>
+        </div>
+
+        <div class="secret-facts">
+          <h3>Fun facts about this site</h3>
+          <ul>
+            <li>The cat companion has {'>'}15 unique phrases</li>
+            <li>There are 6+ easter eggs hidden throughout the site</li>
+            <li>You can type "hack" anywhere on the site for a surprise</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function checkAccess() {
+    const gs = (window as any).gameState;
+    if (gs && gs.isUnlocked('secretPage')) {
+      const locked = document.getElementById('secret-locked');
+      const content = document.getElementById('secret-content');
+      if (locked) locked.style.display = 'none';
+      if (content) content.style.display = 'block';
+    }
+  }
+
+  checkAccess();
+  document.addEventListener('DOMContentLoaded', checkAccess);
+</script>
+
+<style>
+  .secret-page {
+    text-align: center;
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .secret-locked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    color: var(--text-tertiary);
+  }
+
+  .secret-locked h1 {
+    font-size: 4rem;
+  }
+
+  .secret-hint {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+  }
+
+  .secret-content {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .secret-congrats {
+    font-size: 1.0625rem;
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-3xl);
+  }
+
+  .secret-ascii pre {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    display: inline-block;
+    padding: var(--space-xl);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+  }
+
+  .secret-caption {
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    font-style: italic;
+    margin-bottom: var(--space-3xl);
+    max-width: none;
+  }
+
+  .secret-facts {
+    text-align: left;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+  }
+
+  .secret-facts h3 {
+    font-size: 1rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .secret-facts ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .secret-facts li {
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.9375rem;
+    color: var(--text-secondary);
+  }
+
+  .secret-facts li:last-child {
+    border-bottom: none;
+  }
+</style>

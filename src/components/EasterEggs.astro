@@ -1,0 +1,180 @@
+---
+---
+
+<!-- Easter eggs are injected via script, no visible HTML needed -->
+
+<script>
+  // ========== EASTER EGG SYSTEM ==========
+
+  function triggerEasterEgg(id: string, points: number, message: string) {
+    if (!window.gameState) return;
+    if (window.gameState.easterEggsFound.includes(id)) return;
+
+    window.gameState.easterEggsFound.push(id);
+    window.gameState.addPoints(points, window.innerWidth / 2, window.innerHeight / 2);
+    window.gameState.save();
+
+    // Show discovery notification
+    const notif = document.createElement('div');
+    notif.className = 'easter-egg-notif';
+    notif.innerHTML = `
+      <div class="egg-notif-inner">
+        <span class="egg-notif-icon">&#127881;</span>
+        <div>
+          <strong>Easter Egg Found!</strong>
+          <p>${message}</p>
+          <span class="egg-notif-points">+${points} points</span>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(notif);
+    requestAnimationFrame(() => notif.classList.add('visible'));
+    setTimeout(() => {
+      notif.classList.remove('visible');
+      setTimeout(() => notif.remove(), 400);
+    }, 3000);
+  }
+
+  // --- 1. Konami Code (50 pts) ---
+  const konamiSequence = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let konamiIndex = 0;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === konamiSequence[konamiIndex]) {
+      konamiIndex++;
+      if (konamiIndex === konamiSequence.length) {
+        triggerEasterEgg('konami', 50, 'You entered the Konami Code!');
+        konamiIndex = 0;
+      }
+    } else {
+      konamiIndex = 0;
+    }
+  });
+
+  // --- 2. Type "hack" anywhere (30 pts) ---
+  let hackBuffer = '';
+  document.addEventListener('keydown', (e) => {
+    if (e.key.length === 1) {
+      hackBuffer += e.key.toLowerCase();
+      if (hackBuffer.length > 10) hackBuffer = hackBuffer.slice(-10);
+      if (hackBuffer.includes('hack')) {
+        triggerEasterEgg('hack', 30, 'You typed "hack" — a true hacker!');
+        hackBuffer = '';
+      }
+    }
+  });
+
+  // --- 3. Click the logo dot 10 times (25 pts) ---
+  let dotClicks = 0;
+  document.addEventListener('DOMContentLoaded', () => {
+    const logoDot = document.querySelector('.site-logo__dot');
+    if (logoDot) {
+      logoDot.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dotClicks++;
+        if (dotClicks >= 10) {
+          triggerEasterEgg('dot10', 25, 'You clicked the dot 10 times!');
+          dotClicks = 0;
+        }
+      });
+    }
+  });
+
+  // --- 4. Stay on the site for 5 minutes (20 pts) ---
+  setTimeout(() => {
+    triggerEasterEgg('patience', 20, 'You spent 5 minutes on the site. Dedicated!');
+  }, 5 * 60 * 1000);
+
+  // --- 5. Scroll to the very bottom of any page (15 pts) ---
+  let hasScrolledBottom = false;
+  window.addEventListener('scroll', () => {
+    if (hasScrolledBottom) return;
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+      hasScrolledBottom = true;
+      triggerEasterEgg('scroll_bottom', 15, 'You scrolled all the way down!');
+    }
+  });
+
+  // --- 6. Right-click inspect (console message, 10 pts) ---
+  let devtoolsHintShown = false;
+  document.addEventListener('contextmenu', () => {
+    if (!devtoolsHintShown) {
+      devtoolsHintShown = true;
+      console.log(
+        '%c🔓 Easter Egg! Type window.gameState.addPoints(10, 400, 300) in the console for 10 free points!',
+        'font-size: 16px; color: #f97316; font-weight: bold;'
+      );
+    }
+  });
+
+  // Make triggerEasterEgg globally available for console explorers
+  (window as any).findEasterEgg = (code: string) => {
+    if (code === 'console_hacker') {
+      triggerEasterEgg('console', 35, 'You found the console easter egg!');
+    }
+  };
+
+  // Console greeting
+  console.log(
+    '%cHey there, curious one! 👀',
+    'font-size: 18px; color: #2563eb; font-weight: bold;'
+  );
+  console.log(
+    '%cTry: findEasterEgg("console_hacker")',
+    'font-size: 14px; color: #10b981;'
+  );
+</script>
+
+<style is:global>
+  .easter-egg-notif {
+    position: fixed;
+    bottom: var(--space-xl);
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 10001;
+    opacity: 0;
+    transition: all var(--transition-base);
+    pointer-events: none;
+  }
+
+  .easter-egg-notif.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .egg-notif-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--accent-emerald);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.2);
+    font-size: 0.875rem;
+  }
+
+  .egg-notif-icon {
+    font-size: 1.5rem;
+  }
+
+  .egg-notif-inner strong {
+    display: block;
+    font-family: var(--font-display);
+    color: var(--text-primary);
+  }
+
+  .egg-notif-inner p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .egg-notif-points {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--points-color);
+  }
+</style>

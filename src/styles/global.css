@@ -1,0 +1,560 @@
+/* ========================================
+   Daniel Wu Portfolio — Design System
+   Clean minimal monochrome + accent colors
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* --- CSS Custom Properties --- */
+:root {
+  /* Colors — Light Mode */
+  --bg-primary: #fafafa;
+  --bg-secondary: #f0f0f0;
+  --bg-tertiary: #e5e5e5;
+  --text-primary: #1a1a1a;
+  --text-secondary: #525252;
+  --text-tertiary: #a3a3a3;
+  --border: #d4d4d4;
+  --border-light: #e5e5e5;
+
+  /* Accent Colors */
+  --accent-blue: #2563eb;
+  --accent-blue-soft: #dbeafe;
+  --accent-blue-glow: rgba(37, 99, 235, 0.25);
+  --accent-orange: #f97316;
+  --accent-orange-soft: #fff7ed;
+  --accent-orange-glow: rgba(249, 115, 22, 0.25);
+  --accent-emerald: #10b981;
+  --accent-emerald-soft: #d1fae5;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.25);
+  --accent-violet: #7c3aed;
+  --accent-violet-soft: #ede9fe;
+  --accent-violet-glow: rgba(124, 58, 237, 0.25);
+
+  /* Points/Gamification */
+  --points-color: #f97316;
+  --points-glow: rgba(249, 115, 22, 0.3);
+  --unlock-color: #10b981;
+
+  /* Typography */
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+
+  /* Layout */
+  --max-width: 720px;
+  --max-width-wide: 1080px;
+  --header-height: 64px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+/* --- Dark Mode --- */
+[data-theme="dark"] {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #171717;
+  --bg-tertiary: #262626;
+  --text-primary: #e5e5e5;
+  --text-secondary: #a3a3a3;
+  --text-tertiary: #525252;
+  --border: #404040;
+  --border-light: #2a2a2a;
+
+  --accent-blue-soft: #1e3a5f;
+  --accent-blue-glow: rgba(37, 99, 235, 0.35);
+  --accent-orange-soft: #431407;
+  --accent-orange-glow: rgba(249, 115, 22, 0.35);
+  --accent-emerald-soft: #064e3b;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.35);
+  --accent-violet-soft: #2e1065;
+  --accent-violet-glow: rgba(124, 58, 237, 0.35);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  scrollbar-gutter: stable both-edges;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  transition: background-color var(--transition-base), color var(--transition-base);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Force uniform color transition during theme switch so every element fades together */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: background-color 250ms ease,
+              color 250ms ease,
+              border-color 250ms ease,
+              box-shadow 250ms ease,
+              fill 250ms ease,
+              stroke 250ms ease !important;
+}
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+h1 { font-size: clamp(2.5rem, 6vw, 4rem); }
+h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
+h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
+h4 { font-size: 1.125rem; }
+
+p {
+  color: var(--text-secondary);
+  max-width: 65ch;
+}
+
+a {
+  color: var(--accent-blue);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-violet);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--bg-secondary);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Layout Utilities --- */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.container--wide {
+  max-width: var(--max-width-wide);
+}
+
+.section {
+  padding: var(--space-4xl) 0;
+}
+
+.section + .section {
+  padding-top: 0;
+}
+
+/* --- Component Styles --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25em 0.75em;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  transition: all var(--transition-fast);
+}
+
+.badge--accent {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: var(--accent-blue-soft);
+}
+
+.badge--orange {
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  background: var(--accent-orange-soft);
+}
+
+.badge--emerald {
+  border-color: var(--accent-emerald);
+  color: var(--accent-emerald);
+  background: var(--accent-emerald-soft);
+}
+
+.badge--violet {
+  border-color: var(--accent-violet);
+  color: var(--accent-violet);
+  background: var(--accent-violet-soft);
+}
+
+/* Shared glow animation for cards */
+@property --glow-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes glowSpin {
+  to { --glow-angle: 360deg; }
+}
+
+.card {
+  --card-accent: var(--accent-blue);
+  --card-accent-soft: var(--accent-blue-soft);
+  --card-accent-glow: var(--accent-blue-glow);
+  position: relative;
+  isolation: isolate;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  overflow: hidden;
+  transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* Spinning gradient border */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--glow-angle, 0deg),
+    var(--card-accent),
+    transparent 25%,
+    transparent 75%,
+    var(--card-accent)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+/* Soft radial glow */
+.card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 50%;
+  aspect-ratio: 1;
+  background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
+  transform: translate(-20%, -50%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  z-index: -1;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: transparent;
+  box-shadow: 0 12px 32px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
+}
+
+.card:hover::before {
+  opacity: 1;
+  animation: glowSpin 4s linear infinite;
+}
+
+.card:hover::after {
+  opacity: 0.6;
+}
+
+.card__title {
+  font-size: 1.125rem;
+  margin-bottom: var(--space-sm);
+}
+
+.card__description {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--text-tertiary);
+  color: var(--text-primary);
+}
+
+.btn--primary {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border-color: var(--text-primary);
+}
+
+.btn--primary:hover {
+  opacity: 0.85;
+  color: var(--bg-primary);
+}
+
+/* --- Page transitions --- */
+main {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Prose (blog/CTF content) --- */
+.prose h2 {
+  margin-top: var(--space-3xl);
+  margin-bottom: var(--space-md);
+}
+
+.prose h3 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+}
+
+.prose p {
+  margin-bottom: var(--space-lg);
+  max-width: none;
+}
+
+.prose ul, .prose ol {
+  margin-bottom: var(--space-lg);
+  padding-left: var(--space-xl);
+  color: var(--text-secondary);
+}
+
+.prose li {
+  margin-bottom: var(--space-sm);
+}
+
+.prose pre {
+  margin-bottom: var(--space-lg);
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--accent-blue);
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.prose img {
+  border-radius: var(--radius-md);
+  margin: var(--space-xl) 0;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--border-light);
+  margin: var(--space-3xl) 0;
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* --- Selection --- */
+::selection {
+  background: var(--accent-blue);
+  color: white;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--space-md);
+  }
+
+  .section {
+    padding: var(--space-3xl) 0;
+  }
+
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
+
+  .section {
+    padding: var(--space-2xl) 0;
+  }
+}
+
+/* --- Matrix Rain (unlockable) --- */
+.matrix-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.15;
+  display: none;
+  /* Promote to its own GPU layer so it isn't recomposited with the page on
+     every scroll frame. Without these the fixed full-viewport canvas causes
+     scroll jank: the browser stalls scrolling to repaint the canvas region. */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: strict;
+}
+
+.matrix-active .matrix-canvas {
+  display: block;
+}
+
+/* --- Confetti (unlockable) --- */
+.confetti-piece {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: confettiFall 2s ease-in forwards;
+}
+
+@keyframes confettiFall {
+  0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+}
+
+/* --- Custom cursor (unlockable) --- */
+.custom-cursor-active {
+  cursor: crosshair;
+}
+
+.custom-cursor-active a,
+.custom-cursor-active button {
+  cursor: crosshair;
+}
+
+/* --- Points notification --- */
+.points-toast {
+  position: fixed;
+  z-index: 10000;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--points-color);
+  pointer-events: none;
+  animation: pointsFloat 1.2s ease-out forwards;
+}
+
+@keyframes pointsFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  50% { opacity: 1; transform: translateY(-30px) scale(1.2); }
+  100% { opacity: 0; transform: translateY(-60px) scale(0.8); }
+}

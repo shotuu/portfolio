@@ -1,0 +1,179 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Admin">
+  <section class="admin-page">
+    <div class="container">
+      <h1>Admin Panel</h1>
+      <p class="admin-subtitle">Testing tools — not linked anywhere on the site.</p>
+
+      <div class="admin-grid">
+        <div class="admin-card">
+          <h3>Stars</h3>
+          <p class="admin-stars" id="admin-stars">0</p>
+          <div class="admin-buttons">
+            <button id="add-100">+100 ★</button>
+            <button id="add-1000">+1000 ★</button>
+            <button id="set-max">Max (99999)</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h3>Unlocks</h3>
+          <div class="admin-buttons">
+            <button id="unlock-all">Unlock Everything</button>
+            <button id="lock-all">Lock Everything</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h3>Reset</h3>
+          <p class="admin-warning">Clears all progress, unlocks, and cosmetics.</p>
+          <div class="admin-buttons">
+            <button id="reset-all" class="btn-danger">Reset Game State</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function getState() {
+    try {
+      return JSON.parse(localStorage.getItem('dw_gamestate') || '{}');
+    } catch { return {}; }
+  }
+
+  function saveState(state: any) {
+    localStorage.setItem('dw_gamestate', JSON.stringify(state));
+    updateDisplay();
+    window.dispatchEvent(new CustomEvent('points-updated'));
+  }
+
+  function updateDisplay() {
+    const state = getState();
+    const el = document.getElementById('admin-stars');
+    if (el) el.textContent = String(state.points ?? 0);
+  }
+
+  updateDisplay();
+
+  document.getElementById('add-100')?.addEventListener('click', () => {
+    const s = getState();
+    s.points = (s.points ?? 0) + 100;
+    saveState(s);
+  });
+
+  document.getElementById('add-1000')?.addEventListener('click', () => {
+    const s = getState();
+    s.points = (s.points ?? 0) + 1000;
+    saveState(s);
+  });
+
+  document.getElementById('set-max')?.addEventListener('click', () => {
+    const s = getState();
+    s.points = 99999;
+    saveState(s);
+  });
+
+  document.getElementById('unlock-all')?.addEventListener('click', () => {
+    const s = getState();
+    s.points = s.points ?? 0;
+    const shopItems = ['customCursor', 'confetti', 'matrixRain', 'secretPage'];
+    const cosmeticItems = window.COSMETIC_ITEMS ? Object.keys(window.COSMETIC_ITEMS) : [];
+    s.unlocked = [...shopItems, ...cosmeticItems];
+    saveState(s);
+    window.location.reload();
+  });
+
+  document.getElementById('lock-all')?.addEventListener('click', () => {
+    const s = getState();
+    s.unlocked = [];
+    s.equipped = { head: null, face: null, neck: null, fur: null };
+    saveState(s);
+    window.location.reload();
+  });
+
+  document.getElementById('reset-all')?.addEventListener('click', () => {
+    if (confirm('Reset all game state?')) {
+      localStorage.removeItem('dw_gamestate');
+      localStorage.removeItem('dw_theme');
+      document.documentElement.removeAttribute('data-theme');
+      window.location.reload();
+    }
+  });
+</script>
+
+<style>
+  .admin-page {
+    padding: var(--space-2xl) 0;
+    min-height: 60vh;
+  }
+
+  .admin-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+  }
+
+  .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .admin-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: var(--space-lg);
+  }
+
+  .admin-card h3 {
+    margin-bottom: var(--space-sm);
+  }
+
+  .admin-stars {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--accent-orange);
+    font-family: var(--font-mono);
+    margin-bottom: var(--space-md);
+  }
+
+  .admin-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .admin-buttons button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .admin-buttons button:hover {
+    background: var(--accent-blue);
+    color: white;
+    border-color: var(--accent-blue);
+  }
+
+  .btn-danger:hover {
+    background: #e53e3e !important;
+    border-color: #e53e3e !important;
+  }
+
+  .admin-warning {
+    color: var(--text-tertiary);
+    font-size: 0.875rem;
+    margin-bottom: var(--space-md);
+  }
+</style>

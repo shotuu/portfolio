@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Cat Cosmetics">
+  <section class="cosmetics section">
+    <div class="container">
+      <div class="cosmetics-header">
+        <h2 class="section-heading">Cat Wardrobe</h2>
+        <p class="cosmetics-sub">Dress up your cat companion. Items in the same category can't be worn together.</p>
+      </div>
+
+      <div class="cosmetics-grid" id="cosmetics-grid"></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function renderCosmetics() {
+    const grid = document.getElementById('cosmetics-grid');
+    if (!grid || !window.COSMETIC_ITEMS || !window.COSMETIC_CATEGORIES) return;
+
+    const items = window.COSMETIC_ITEMS;
+    const categories = window.COSMETIC_CATEGORIES;
+    const gs = window.gameState;
+    if (!gs) return;
+
+    grid.innerHTML = '';
+
+    for (const [catKey, catLabel] of Object.entries(categories)) {
+      const section = document.createElement('div');
+      section.className = 'cosmetics-category';
+
+      const heading = document.createElement('h3');
+      heading.className = 'cosmetics-category__title';
+      heading.textContent = catLabel as string;
+      section.appendChild(heading);
+
+      const itemsContainer = document.createElement('div');
+      itemsContainer.className = 'cosmetics-items';
+
+      for (const [itemId, item] of Object.entries(items)) {
+        if ((item as any).category !== catKey) continue;
+        const i = item as any;
+
+        const owned = gs.isUnlocked(itemId);
+        const equipped = gs.equipped[catKey] === itemId;
+
+        const card = document.createElement('button');
+        card.className = 'cosmetic-card' + (equipped ? ' equipped' : '') + (owned ? ' owned' : '');
+        card.dataset.item = itemId;
+        card.dataset.cost = String(i.cost);
+        card.dataset.category = catKey;
+
+        card.innerHTML = `
+          <span class="cosmetic-card__icon">${i.icon}</span>
+          <span class="cosmetic-card__name">${i.name}</span>
+          <span class="cosmetic-card__desc">${i.description}</span>
+          <span class="cosmetic-card__action">
+            ${!owned ? `${i.cost} &#9733;` : equipped ? 'Unequip' : 'Equip'}
+          </span>
+        `;
+
+        card.addEventListener('click', () => {
+          if (!owned) {
+            // Purchase
+            if (gs.spendPoints(i.cost)) {
+              gs.unlock(itemId);
+              // Auto-equip on purchase
+              gs.equip(itemId);
+              renderCosmetics();
+            } else {
+              card.classList.add('shake');
+              setTimeout(() => card.classList.remove('shake'), 400);
+            }
+          } else if (equipped) {
+            gs.unequip(itemId);
+            renderCosmetics();
+          } else {
+            gs.equip(itemId);
+            renderCosmetics();
+          }
+        });
+
+        itemsContainer.appendChild(card);
+      }
+
+      section.appendChild(itemsContainer);
+      grid.appendChild(section);
+    }
+  }
+
+  // Render on load and when cosmetics update
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(renderCosmetics, 50);
+  });
+  renderCosmetics();
+  window.addEventListener('cosmetics-updated', renderCosmetics);
+</script>
+
+<style>
+  .cosmetics-header {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .cosmetics-sub {
+    margin-top: var(--space-sm);
+    font-size: 0.9375rem;
+  }
+</style>
+
+<style is:global>
+  .cosmetics-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+  }
+
+  .cosmetics-category__title {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .cosmetics-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .cosmetic-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    --card-accent: var(--accent-violet);
+    --card-accent-soft: var(--accent-violet-soft);
+    --card-accent-glow: var(--accent-violet-glow);
+    position: relative;
+    isolation: isolate;
+    gap: var(--space-sm);
+    padding: var(--space-lg) var(--space-md);
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    text-align: center;
+    width: 100%;
+  }
+
+  .cosmetic-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+      from var(--glow-angle, 0deg),
+      var(--card-accent),
+      transparent 25%,
+      transparent 75%,
+      var(--card-accent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .cosmetic-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
+    transform: translate(-50%, 30%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    z-index: -1;
+  }
+
+  .cosmetic-card:hover {
+    transform: translateY(-2px);
+    border-color: transparent;
+    box-shadow: 0 8px 24px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
+  }
+
+  .cosmetic-card:hover::before {
+    opacity: 1;
+    animation: glowSpin 4s linear infinite;
+  }
+
+  .cosmetic-card:hover::after {
+    opacity: 0.5;
+  }
+
+  .cosmetic-card.equipped {
+    border-color: var(--accent-emerald);
+    background: var(--accent-emerald-soft);
+  }
+
+  .cosmetic-card.owned:not(.equipped):hover {
+    border-color: var(--accent-blue);
+  }
+
+  .cosmetic-card.shake {
+    animation: cosmeticShake 0.4s ease;
+  }
+
+  @keyframes cosmeticShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+
+  .cosmetic-card__icon {
+    font-size: 2rem;
+  }
+
+  .cosmetic-card__name {
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .cosmetic-card__desc {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    line-height: 1.4;
+  }
+
+  .cosmetic-card__action {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--points-color);
+    margin-top: var(--space-xs);
+  }
+
+  .cosmetic-card.owned .cosmetic-card__action {
+    color: var(--accent-blue);
+  }
+
+  .cosmetic-card.equipped .cosmetic-card__action {
+    color: var(--accent-emerald);
+  }
+
+  @media (max-width: 480px) {
+    .cosmetics-items {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

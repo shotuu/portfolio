@@ -1,0 +1,917 @@
+---
+// Pixel art cat sprite data (18 cols x 18 rows) — traced from reference image
+// K=black outline, W=white, B=brown calico, T=tan patch, R=rose cheek, .=transparent
+const catRows = [
+  ".....KKK......KKK.",  // 0: ear tips
+  "....KBBBKKKKKKBBK.",  // 1: ears (brown outer)
+  "....KBRTTTWWWTTRK.",  // 2: ear base + head top
+  "....KBRTTWWWWWTRK.",  // 3: head upper
+  "....KBTTWWWWWWWTK.",  // 4: head (tan patches)
+  "...KTTWWWWWWWWWWTK",  // 5: head widened
+  "...KTWWKKWWWWWKKWK",  // 6: eyes top (both open)
+  "...KTWWKKWWKWWKKWK",  // 7: eyes bottom + nose
+  "...KTTRWWWKWKWWWRK",  // 8: cheeks (rose)
+  ".K.KKTTWWWWWWWWWKK",  // 9: neck
+  "KBK..KKTTWWWWWTKK.",  // 10: arm start
+  "KBBK...KKKKKKKK...",  // 11: arm + body outline
+  "KBBK..KBTWWWWWTK..",  // 12: paw + body
+  ".KBBKKKTWWWWWWWK..",  // 13: body
+  "..KBBBKWWWWWWWWK..",  // 14: body lower
+  "...KKKKTTWKTKWWK..",  // 15: legs
+  "......KTKWKKKWTK..",  // 16: feet
+  "......KKKKK.KKK..",  // 17: feet bottom
+];
+
+const colorMap: Record<string, string> = {
+  K: '#222222',
+  W: '#ffffff',
+  B: '#a5776d',
+  T: '#e7caba',
+  R: '#f79c8f',
+};
+
+const pixelSize = 4;
+const cols = 18;
+const rows = catRows.length;
+
+type Pixel = { x: number; y: number; color: string; isFur: boolean };
+const pixels: Pixel[] = [];
+catRows.forEach((row, y) => {
+  for (let x = 0; x < row.length; x++) {
+    const ch = row[x];
+    if (ch !== '.' && colorMap[ch]) {
+      pixels.push({
+        x: x * pixelSize,
+        y: y * pixelSize,
+        color: colorMap[ch],
+        isFur: ch === 'W',
+      });
+    }
+  }
+});
+
+const svgWidth = cols * pixelSize;
+const svgHeight = rows * pixelSize;
+
+// Eye positions for overlays (in SVG coords)
+const leftEyeX = 7 * pixelSize;  // 28
+const rightEyeX = 14 * pixelSize; // 56
+const eyeTopY = 6 * pixelSize;    // 24
+const eyeSize = 2 * pixelSize;    // 8
+const eyeRowH = pixelSize;        // 4
+---
+
+<div class="pet-container" id="pet">
+  <div class="pet-body">
+    <div class="pet-inner">
+      <!-- Speech bubble — always above headwear -->
+      <div class="pet-speech" id="pet-speech"></div>
+
+      <!-- Headwear: Hat (unlockable) -->
+      <div class="pet-hat" id="pet-hat">
+        <div class="hat-top"></div>
+        <div class="hat-brim"></div>
+      </div>
+
+      <!-- Headwear: Crown (unlockable) -->
+      <div class="pet-crown" id="pet-crown"></div>
+
+      <!-- Headwear: Beret -->
+      <div class="pet-beret" id="pet-beret"></div>
+
+      <!-- Headwear: Wizard Hat -->
+      <div class="pet-wizard-hat" id="pet-wizard-hat">
+        <div class="wizard-hat-cone"></div>
+        <div class="wizard-hat-brim"></div>
+      </div>
+
+      <!-- Headwear: Flower Crown -->
+      <div class="pet-flower-crown" id="pet-flower-crown"></div>
+
+      <!-- Back items (render before neck/SVG so they appear behind) -->
+      <div class="pet-cape" id="pet-cape"></div>
+      <div class="pet-wings" id="pet-wings"></div>
+      <div class="pet-bat-wings" id="pet-bat-wings"></div>
+
+      <!-- Neck items (render before SVG so face items in SVG layer above) -->
+      <div class="pet-bowtie" id="pet-bowtie"></div>
+      <div class="pet-scarf" id="pet-scarf"></div>
+      <div class="pet-bandana" id="pet-bandana"></div>
+      <div class="pet-bell" id="pet-bell"></div>
+
+      <!-- Pixel art cat SVG -->
+      <svg
+      id="cat-sprite"
+      class="cat-svg"
+      viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+      width={svgWidth}
+      height={svgHeight}
+      xmlns="http://www.w3.org/2000/svg"
+      shape-rendering="crispEdges"
+    >
+      {pixels.map(p => (
+        <rect
+          x={p.x} y={p.y}
+          width={pixelSize} height={pixelSize}
+          fill={p.color}
+          class={p.isFur ? 'fur-pixel' : ''}
+        />
+      ))}
+
+      <!-- Blink overlays: cover top row of each eye with white -->
+      <rect class="blink-lid" x={leftEyeX} y={eyeTopY} width={eyeSize} height={eyeRowH} fill="#ffffff" opacity="0" />
+      <rect class="blink-lid" x={rightEyeX} y={eyeTopY} width={eyeSize} height={eyeRowH} fill="#ffffff" opacity="0" />
+
+      <!-- Hurt eyes overlay (>< expression) -->
+      <g class="hurt-eyes" style="display:none">
+        <rect x={leftEyeX} y={eyeTopY} width={eyeSize} height={eyeSize} fill="#ffffff" class="fur-cover"/>
+        <rect x={rightEyeX} y={eyeTopY} width={eyeSize} height={eyeSize} fill="#ffffff" class="fur-cover"/>
+        <line x1={leftEyeX + 1} y1={eyeTopY + 1} x2={leftEyeX + eyeSize - 1} y2={eyeTopY + eyeSize - 1} stroke="#222222" stroke-width="1.5"/>
+        <line x1={leftEyeX + eyeSize - 1} y1={eyeTopY + 1} x2={leftEyeX + 1} y2={eyeTopY + eyeSize - 1} stroke="#222222" stroke-width="1.5"/>
+        <line x1={rightEyeX + 1} y1={eyeTopY + 1} x2={rightEyeX + eyeSize - 1} y2={eyeTopY + eyeSize - 1} stroke="#222222" stroke-width="1.5"/>
+        <line x1={rightEyeX + eyeSize - 1} y1={eyeTopY + 1} x2={rightEyeX + 1} y2={eyeTopY + eyeSize - 1} stroke="#222222" stroke-width="1.5"/>
+      </g>
+
+      <!-- Sunglasses overlay (unlockable) -->
+      <g class="cat-sunglasses" id="cat-sunglasses" style="display:none">
+        <rect x={leftEyeX - 4} y={eyeTopY - 2} width={eyeSize + 8} height={eyeSize + 4} fill="#1a1a1a" rx="1"/>
+        <rect x={rightEyeX - 4} y={eyeTopY - 2} width={eyeSize + 8} height={eyeSize + 4} fill="#1a1a1a" rx="1"/>
+        <rect x={leftEyeX + eyeSize + 4} y={eyeTopY} width={rightEyeX - leftEyeX - eyeSize - 8} height={pixelSize - 1} fill="#1a1a1a"/>
+        <rect x={leftEyeX - 2} y={eyeTopY} width={4} height={2} fill="#444" opacity="0.4"/>
+        <rect x={rightEyeX - 2} y={eyeTopY} width={4} height={2} fill="#444" opacity="0.4"/>
+      </g>
+
+      <!-- Monocle overlay (unlockable) -->
+      <g class="cat-monocle" id="cat-monocle" style="display:none">
+        <circle cx={rightEyeX + pixelSize} cy={eyeTopY + pixelSize} r={pixelSize + 2} fill="none" stroke="#c8a200" stroke-width="1.5"/>
+        <circle cx={rightEyeX + pixelSize} cy={eyeTopY + pixelSize} r={pixelSize - 1} fill="rgba(200,220,255,0.2)"/>
+        <line x1={rightEyeX + pixelSize} y1={eyeTopY + pixelSize + pixelSize + 2} x2={rightEyeX + pixelSize - 2} y2={eyeTopY + pixelSize + pixelSize + 14} stroke="#c8a200" stroke-width="0.8"/>
+      </g>
+
+      <!-- Blush overlay (unlockable) -->
+      <g class="cat-blush" id="cat-blush" style="display:none">
+        <ellipse cx={leftEyeX + pixelSize - 2} cy={8 * pixelSize + 2} rx={pixelSize + 1} ry={pixelSize - 1} fill="#ff9999" opacity="0.5"/>
+        <ellipse cx={rightEyeX + pixelSize + 4} cy={8 * pixelSize + 2} rx={pixelSize + 1} ry={pixelSize - 1} fill="#ff9999" opacity="0.5"/>
+      </g>
+    </svg>
+    </div>
+  </div>
+</div>
+
+<script>
+  const pet = document.getElementById('pet');
+  const speech = document.getElementById('pet-speech');
+  const catSprite = document.getElementById('cat-sprite');
+  const hurtEyes = document.querySelector('.hurt-eyes') as SVGGElement | null;
+
+  const catHeight = 80;
+  const homeX = 24;
+  let homeY = window.innerHeight - catHeight - 16;
+  let lastClickTime = 0;
+  let isDragging = false;
+  let didDrag = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragOffsetX = 0;
+  let dragOffsetY = 0;
+  let currentX = homeX;
+  let currentY = homeY;
+  let isAnimating = false;
+  let animFrame: number | null = null;
+  const petBody = document.querySelector('.pet-body') as HTMLElement | null;
+
+  const messages = [
+    'meow!', 'purr~', 'nya~', '*blink*', 'hack the planet!',
+    ':3', '*stretches*', 'got bytes?', 'segfault!', '0xCAFE',
+    '*yawns*', 'sudo meow', 'ping!', 'ack!', 'cat /dev/random',
+  ];
+
+  if (pet) {
+    pet.style.left = homeX + 'px';
+    pet.style.top = homeY + 'px';
+  }
+
+  window.addEventListener('resize', () => {
+    homeY = window.innerHeight - catHeight - 16;
+    if (!isDragging && !isAnimating && pet) {
+      currentY = homeY;
+      pet.style.top = homeY + 'px';
+    }
+  });
+
+  function updatePosition() {
+    if (pet) {
+      pet.style.left = currentX + 'px';
+      pet.style.top = currentY + 'px';
+    }
+  }
+
+  function showSpeech(msg: string, duration = 1500) {
+    if (speech) {
+      speech.textContent = msg;
+      speech.classList.add('visible');
+      setTimeout(() => speech.classList.remove('visible'), duration);
+    }
+  }
+
+  function showHurtEyes(duration = 1200) {
+    if (hurtEyes) {
+      hurtEyes.style.display = 'block';
+      setTimeout(() => { hurtEyes.style.display = 'none'; }, duration);
+    }
+    // Tilt face items (sunglasses, monocle)
+    const sunglasses = document.getElementById('cat-sunglasses');
+    if (sunglasses && sunglasses.style.display !== 'none') {
+      sunglasses.classList.add('tilted');
+      setTimeout(() => sunglasses.classList.remove('tilted'), duration);
+    }
+    const monocle = document.getElementById('cat-monocle');
+    if (monocle && monocle.style.display !== 'none') {
+      monocle.classList.add('tilted');
+      setTimeout(() => monocle.classList.remove('tilted'), duration);
+    }
+  }
+
+  // --- Dragging ---
+  function onPointerDown(e: PointerEvent) {
+    if (!pet || isAnimating) return;
+    isDragging = true;
+    didDrag = false;
+    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+
+    const rect = pet.getBoundingClientRect();
+    dragOffsetX = e.clientX - rect.left;
+    dragOffsetY = e.clientY - rect.top;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    pet.classList.add('dragging');
+    pet.setPointerCapture(e.pointerId);
+  }
+
+  function onPointerMove(e: PointerEvent) {
+    if (!isDragging || !pet) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) didDrag = true;
+
+    currentX = e.clientX - dragOffsetX;
+    currentY = e.clientY - dragOffsetY;
+    updatePosition();
+    if (petBody) {
+      if (e.movementX < -1) petBody.style.transform = 'scaleX(-1)';
+      else if (e.movementX > 1) petBody.style.transform = 'scaleX(1)';
+    }
+  }
+
+  function onPointerUp() {
+    if (!isDragging) return;
+    isDragging = false;
+    pet?.classList.remove('dragging');
+    if (didDrag) {
+      startDrop();
+    }
+  }
+
+  pet?.addEventListener('pointerdown', onPointerDown);
+  document.addEventListener('pointermove', onPointerMove);
+  document.addEventListener('pointerup', onPointerUp);
+
+  // --- Drop physics with bounce ---
+  function startDrop() {
+    if (!pet) return;
+    isAnimating = true;
+
+    let velocityY = 0;
+    const gravity = 0.6;
+    const bounceDamping = 0.4;
+    const floorY = window.innerHeight - catHeight - 16;
+    let hasHitFloor = false;
+
+    function physicsStep() {
+      velocityY += gravity;
+      currentY += velocityY;
+
+      if (currentY >= floorY) {
+        currentY = floorY;
+
+        if (!hasHitFloor) {
+          hasHitFloor = true;
+          showSpeech('ow!', 1500);
+          showHurtEyes(1500);
+          pet!.classList.add('squish');
+          setTimeout(() => pet!.classList.remove('squish'), 250);
+        }
+
+        velocityY = -velocityY * bounceDamping;
+
+        if (Math.abs(velocityY) < 1.5) {
+          currentY = floorY;
+          updatePosition();
+          setTimeout(() => walkHome(), 800);
+          return;
+        }
+      }
+
+      updatePosition();
+      animFrame = requestAnimationFrame(physicsStep);
+    }
+
+    animFrame = requestAnimationFrame(physicsStep);
+  }
+
+  // --- Walk home ---
+  function walkHome() {
+    if (!pet) return;
+    const targetX = homeX;
+    const targetY = window.innerHeight - catHeight - 16;
+    const speed = 1.5;
+
+    if (petBody) {
+      petBody.style.transform = targetX < currentX ? 'scaleX(-1)' : 'scaleX(1)';
+    }
+    pet.classList.add('crawling');
+
+    function step() {
+      const dx = targetX - currentX;
+      const dy = targetY - currentY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < speed) {
+        currentX = targetX;
+        currentY = targetY;
+        updatePosition();
+        pet!.classList.remove('crawling');
+        if (petBody) petBody.style.transform = 'scaleX(1)';
+        isAnimating = false;
+        animFrame = null;
+        return;
+      }
+
+      currentX += (dx / dist) * speed;
+      currentY += (dy / dist) * speed;
+      updatePosition();
+      animFrame = requestAnimationFrame(step);
+    }
+
+    animFrame = requestAnimationFrame(step);
+  }
+
+  // --- Click for points ---
+  pet?.addEventListener('click', (e) => {
+    if (didDrag || isAnimating) return;
+    const now = Date.now();
+    if (now - lastClickTime < 500) return;
+    lastClickTime = now;
+
+    if (window.gameState) {
+      window.gameState.petClicks++;
+      window.gameState.addPoints(1, e.clientX, e.clientY);
+      window.gameState.save();
+    }
+
+    showSpeech(messages[Math.floor(Math.random() * messages.length)]);
+    pet.classList.add('bounce');
+    setTimeout(() => pet.classList.remove('bounce'), 400);
+  });
+
+  // --- Blinking animation (both eyes) ---
+  function blink() {
+    if (hurtEyes && hurtEyes.style.display !== 'none') return;
+    const lids = document.querySelectorAll('.blink-lid');
+    lids.forEach(lid => lid.setAttribute('opacity', '1'));
+    setTimeout(() => lids.forEach(lid => lid.setAttribute('opacity', '0')), 150);
+  }
+
+  function scheduleBlink() {
+    setTimeout(() => {
+      blink();
+      scheduleBlink();
+    }, 2500 + Math.random() * 3500);
+  }
+  scheduleBlink();
+
+  // --- Idle animations ---
+  setInterval(() => {
+    if (isDragging || isAnimating) return;
+
+    if (Math.random() < 0.3) {
+      const idleMessages = ['zzz...', '*purrs*', '...', ':3', '*naps*'];
+      showSpeech(idleMessages[Math.floor(Math.random() * idleMessages.length)], 2000);
+    }
+
+    if (Math.random() < 0.2 && pet) {
+      pet.classList.add('head-tilt');
+      setTimeout(() => pet.classList.remove('head-tilt'), 1500);
+    }
+  }, 8000);
+
+  // --- Fur color utility (called from gameState.applyUnlock) ---
+  (window as any).setPetFurColor = (color: string) => {
+    document.querySelectorAll('.fur-pixel').forEach(r => r.setAttribute('fill', color));
+    document.querySelectorAll('.blink-lid').forEach(r => r.setAttribute('fill', color));
+    document.querySelectorAll('.fur-cover').forEach(r => r.setAttribute('fill', color));
+  };
+</script>
+
+<style>
+  .pet-container {
+    position: fixed;
+    z-index: 80;
+    pointer-events: auto;
+    cursor: grab;
+    user-select: none;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.2));
+    touch-action: none;
+    transition: filter var(--transition-fast);
+  }
+
+  .pet-container.dragging {
+    cursor: grabbing;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+    z-index: 9999;
+  }
+
+  .pet-container.bounce {
+    animation: petBounce 0.4s ease;
+  }
+
+  .pet-container.squish {
+    animation: petSquish 0.25s ease;
+    transform-origin: bottom center;
+  }
+
+  .pet-container.head-tilt .cat-svg {
+    animation: headTilt 1.5s ease;
+  }
+
+  .pet-container.crawling .pet-inner {
+    animation: walkCycle 0.4s steps(2) infinite;
+  }
+
+  @keyframes petBounce {
+    0%, 100% { transform: scale(1) translateY(0); }
+    30% { transform: scale(1.15) translateY(-8px); }
+    60% { transform: scale(0.95) translateY(2px); }
+  }
+
+  @keyframes petSquish {
+    0% { transform: scaleY(1) scaleX(1); }
+    40% { transform: scaleY(0.65) scaleX(1.35); }
+    70% { transform: scaleY(1.1) scaleX(0.9); }
+    100% { transform: scaleY(1) scaleX(1); }
+  }
+
+  @keyframes headTilt {
+    0%, 100% { transform: rotate(0deg); }
+    30%, 70% { transform: rotate(12deg); }
+  }
+
+  @keyframes walkCycle {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  .pet-body {
+    position: relative;
+  }
+
+  .pet-inner {
+    position: relative;
+  }
+
+  .cat-svg {
+    display: block;
+    width: 80px;
+    height: 80px;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    transition: transform 0.15s;
+    position: relative;
+  }
+
+
+  /* Speech bubble — always above headwear */
+  .pet-speech {
+    position: absolute;
+    bottom: calc(100% + 28px);
+    left: 60%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    pointer-events: none;
+    box-shadow: var(--shadow-sm);
+    transform: translateX(-50%) translateY(4px);
+    z-index: 10;
+  }
+
+  .pet-speech.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Hat (unlockable) */
+  .pet-hat {
+    position: absolute;
+    top: -10px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 2;
+  }
+
+  .pet-hat.visible {
+    display: block;
+    animation: cosmeticDrop 0.4s ease;
+  }
+
+  @keyframes cosmeticDrop {
+    from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+  }
+
+  .hat-top {
+    width: 14px;
+    height: 12px;
+    background: #222;
+    border-radius: 3px 3px 0 0;
+    margin: 0 auto;
+  }
+
+  .hat-brim {
+    width: 22px;
+    height: 4px;
+    background: #222;
+    border-radius: 2px;
+  }
+
+  /* Crown (unlockable) */
+  .pet-crown {
+    position: absolute;
+    top: -10px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 2;
+    width: 26px;
+    height: 14px;
+    background: #fbbf24;
+    clip-path: polygon(0% 100%, 10% 30%, 25% 70%, 50% 0%, 75% 70%, 90% 30%, 100% 100%);
+  }
+
+  .pet-crown.visible {
+    display: block;
+    animation: cosmeticDrop 0.4s ease;
+  }
+
+  /* Bowtie (unlockable) */
+  .pet-bowtie {
+    position: absolute;
+    top: 44px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 2;
+    width: 16px;
+    height: 10px;
+    background: #e53e3e;
+    clip-path: polygon(0% 0%, 42% 42%, 42% 0%, 58% 0%, 58% 42%, 100% 0%, 100% 100%, 58% 58%, 58% 100%, 42% 100%, 42% 58%, 0% 100%);
+  }
+
+  .pet-bowtie.visible {
+    display: block;
+  }
+
+  /* Scarf (unlockable) */
+  .pet-scarf {
+    position: absolute;
+    top: 45px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 1;
+    width: 36px;
+    height: 6px;
+    background: #3b82f6;
+    border-radius: 2px;
+  }
+
+  .pet-scarf.visible {
+    display: block;
+  }
+
+  .pet-scarf::after {
+    content: '';
+    position: absolute;
+    right: 2px;
+    top: 100%;
+    width: 6px;
+    height: 10px;
+    background: #3b82f6;
+    border-radius: 0 0 2px 2px;
+  }
+
+  /* Beret (unlockable) */
+  .pet-beret {
+    position: absolute;
+    top: -8px;
+    left: 61%;
+    transform: translateX(-50%) rotate(-12deg);
+    display: none;
+    z-index: 2;
+    width: 22px;
+    height: 10px;
+    background: #e53e3e;
+    border-radius: 50% 50% 30% 30%;
+  }
+
+  .pet-beret::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 3px;
+    background: #e53e3e;
+    border-radius: 50%;
+  }
+
+  .pet-beret.visible {
+    display: block;
+    animation: cosmeticDrop 0.4s ease;
+  }
+
+  /* Wizard Hat (unlockable) */
+  .pet-wizard-hat {
+    position: absolute;
+    top: -17px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 2;
+  }
+
+  .pet-wizard-hat.visible {
+    display: block;
+    animation: cosmeticDrop 0.4s ease;
+  }
+
+  .wizard-hat-cone {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 20px solid #4338ca;
+    margin: 0 auto;
+  }
+
+  .wizard-hat-cone::after {
+    content: '★';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 6px;
+    color: #fbbf24;
+  }
+
+  .wizard-hat-brim {
+    width: 28px;
+    height: 4px;
+    background: #4338ca;
+    border-radius: 50%;
+    margin-top: -2px;
+  }
+
+  /* Flower Crown (unlockable) */
+  .pet-flower-crown {
+    position: absolute;
+    top: -4px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 2;
+    width: 28px;
+    height: 8px;
+    background: linear-gradient(90deg, #f472b6 0%, #fbbf24 25%, #f472b6 50%, #a78bfa 75%, #f472b6 100%);
+    border-radius: 4px 4px 2px 2px;
+    box-shadow: 0 0 3px rgba(244, 114, 182, 0.4);
+  }
+
+  .pet-flower-crown::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 3px;
+    width: 5px;
+    height: 5px;
+    background: #fb923c;
+    border-radius: 50%;
+  }
+
+  .pet-flower-crown::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: 5px;
+    width: 6px;
+    height: 6px;
+    background: #c084fc;
+    border-radius: 50%;
+  }
+
+  .pet-flower-crown.visible {
+    display: block;
+    animation: cosmeticDrop 0.4s ease;
+  }
+
+  /* Bandana (unlockable) */
+  .pet-bandana {
+    position: absolute;
+    top: 49px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 2;
+    width: 30px;
+    height: 8px;
+    background: #dc2626;
+    clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 50% 70%, 10% 100%);
+  }
+
+  .pet-bandana.visible {
+    display: block;
+  }
+
+  /* Bell Collar (unlockable) */
+  .pet-bell {
+    position: absolute;
+    top: 49px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 2;
+    width: 28px;
+    height: 4px;
+    background: #ef4444;
+    border-radius: 2px;
+  }
+
+  .pet-bell::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 7px;
+    height: 7px;
+    background: #fbbf24;
+    border-radius: 50%;
+    border: 1px solid #d97706;
+  }
+
+  .pet-bell.visible {
+    display: block;
+  }
+
+  /* Cape (unlockable) */
+  .pet-cape {
+    position: absolute;
+    top: 49px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 0;
+    width: 45px;
+    height: 40px;
+    background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+    clip-path: polygon(10% 0%, 90% 0%, 100% 60%, 70% 100%, 30% 100%, 0% 60%);
+    border-radius: 0 0 4px 4px;
+  }
+
+  .pet-cape.visible {
+    display: block;
+  }
+
+  /* Angel Wings (unlockable) */
+  .pet-wings {
+    position: absolute;
+    top: 42px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 0;
+    width: 100px;
+    height: 24px;
+  }
+
+  .pet-wings::before,
+  .pet-wings::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 26px;
+    height: 20px;
+    background: white;
+    border-radius: 50% 50% 20% 20%;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  }
+
+  .pet-wings::before {
+    left: 0;
+    transform: rotate(-20deg);
+  }
+
+  .pet-wings::after {
+    right: 0;
+    transform: rotate(20deg);
+  }
+
+  .pet-wings.visible {
+    display: block;
+  }
+
+  /* Bat Wings (unlockable) */
+  .pet-bat-wings {
+    position: absolute;
+    top: 42px;
+    left: 61%;
+    transform: translateX(-50%);
+    display: none;
+    z-index: 0;
+    width: 104px;
+    height: 26px;
+    filter: drop-shadow(0 0 3px rgba(100, 0, 160, 0.5));
+  }
+
+  .pet-bat-wings::before,
+  .pet-bat-wings::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 34px;
+    height: 22px;
+    background: linear-gradient(135deg, #2d1b4e 0%, #1a1a2e 50%, #0d0d0d 100%);
+    clip-path: polygon(50% 100%, 0% 0%, 15% 50%, 30% 5%, 45% 45%, 65% 0%, 80% 35%, 100% 10%);
+    animation: batWingFlap 1.5s ease-in-out infinite;
+  }
+
+  .pet-bat-wings::before {
+    left: 0;
+    transform: scaleX(-1);
+    animation-delay: 0.1s;
+  }
+
+  .pet-bat-wings::after {
+    right: 0;
+  }
+
+  @keyframes batWingFlap {
+    0%, 100% { transform: rotateY(0deg) scaleY(1); }
+    50% { transform: rotateY(10deg) scaleY(0.85); }
+  }
+
+  .pet-bat-wings::before {
+    animation-name: batWingFlapLeft;
+  }
+
+  @keyframes batWingFlapLeft {
+    0%, 100% { transform: scaleX(-1) rotateY(0deg) scaleY(1); }
+    50% { transform: scaleX(-1) rotateY(10deg) scaleY(0.85); }
+  }
+
+  .pet-bat-wings.visible {
+    display: block;
+  }
+
+  /* Monocle tilt on impact */
+  :global(.cat-monocle.tilted) {
+    animation: glassesTilt 0.3s ease forwards;
+  }
+
+  /* Sunglasses tilt on impact */
+  :global(.cat-sunglasses.tilted) {
+    animation: glassesTilt 0.3s ease forwards;
+  }
+
+  @keyframes glassesTilt {
+    0% { transform: rotate(0deg); }
+    40% { transform: rotate(15deg) translateY(1px); }
+    100% { transform: rotate(12deg) translateY(1px); }
+  }
+
+  /* Scale down on small screens — applied to .pet-inner to avoid drag position mismatch */
+  @media (max-width: 400px) {
+    .pet-inner {
+      scale: 0.75;
+      transform-origin: bottom left;
+    }
+  }
+</style>

@@ -1,0 +1,773 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Resume">
+  <section class="section">
+    <div class="container">
+      <div class="resume-header">
+        <div>
+          <h1>Resume</h1>
+          <p class="page-subtitle">My journey so far. Hover or tap any entry to learn more.</p>
+        </div>
+        <a href={`${base}/daniel_wu_cv.pdf`} download class="btn btn--primary">Download PDF &darr;</a>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="tl-filters">
+        <button class="tl-filter active" data-filter="all">All</button>
+        <button class="tl-filter" data-filter="education">Education</button>
+        <button class="tl-filter" data-filter="experience">Experience</button>
+        <button class="tl-filter" data-filter="leadership">Leadership</button>
+        <button class="tl-filter" data-filter="project">Projects</button>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline">
+
+        <!-- 2025 - Present -->
+        <div class="tl-year">2025 — Present</div>
+
+        <div class="tl-item" data-category="education">
+          <div class="tl-dot tl-dot--blue"></div>
+          <div class="tl-card tl-card--blue">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--blue">Education</span>
+              <span class="tl-date">Sep. 2025 — Jun. 2029</span>
+            </div>
+            <h3 class="tl-card__title">University of California, Los Angeles (UCLA)</h3>
+            <p class="tl-card__subtitle">B.S. in Computer Science | GPA: 4.0/4.0</p>
+            <p class="tl-card__location">Los Angeles, CA</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>SAF Scholar — full-ride merit scholarship from the Singapore Armed Forces, awarded to fewer than 5 individuals annually to develop future senior leadership</li>
+                <li>Coursework: Data Structures & Algorithms, Linear Algebra, Multivariable Calculus, Computer Organization, Vector Calculus, Differential Equations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item" data-category="experience">
+          <div class="tl-dot tl-dot--emerald"></div>
+          <div class="tl-card tl-card--emerald">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--emerald">Experience</span>
+              <span class="tl-date">Sep. 2025 — Present</span>
+            </div>
+            <h3 class="tl-card__title">Infrastructure Engineer</h3>
+            <p class="tl-card__subtitle">LA CTF — UCLA ACM Cybersecurity</p>
+            <p class="tl-card__location">Los Angeles, CA</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Building and maintaining competition infrastructure for one of the largest student-run CTF events in the U.S.</li>
+                <li>Architecting containerized challenge deployment and real-time scoring systems to handle thousands of concurrent participants</li>
+              </ul>
+              <div class="tl-tech">
+                <span class="tl-tech__tag">Docker</span>
+                <span class="tl-tech__tag">Infrastructure</span>
+                <span class="tl-tech__tag">CTF</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2024 -->
+        <div class="tl-year">2024</div>
+
+        <div class="tl-item" data-category="experience">
+          <div class="tl-dot tl-dot--emerald"></div>
+          <div class="tl-card tl-card--emerald">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--emerald">Experience</span>
+              <span class="tl-date">Jan. 2024 — Aug. 2025</span>
+            </div>
+            <h3 class="tl-card__title">Cyber Threat Intelligence Analyst</h3>
+            <p class="tl-card__subtitle">Digital &amp; Intelligence Service (DIS), Singapore Armed Forces</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Built automated OSINT-to-TTP pipelines using Python and LLM-assisted parsing, generating MITRE ATT&CK heat maps that cut analyst triage time by over 40%</li>
+                <li>Engineered fault-tolerant web crawlers with structured output validation and QA checks, sustaining high precision/recall across evolving threat data</li>
+              </ul>
+              <div class="tl-tech">
+                <span class="tl-tech__tag">Python</span>
+                <span class="tl-tech__tag">LLMs</span>
+                <span class="tl-tech__tag">MITRE ATT&CK</span>
+                <span class="tl-tech__tag">OSINT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item" data-category="leadership">
+          <div class="tl-dot tl-dot--orange"></div>
+          <div class="tl-card tl-card--orange">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--orange">Leadership</span>
+              <span class="tl-date">Jan. 2024 — Dec. 2024</span>
+            </div>
+            <h3 class="tl-card__title">Sword of Honour (Valedictorian) &amp; Best in Knowledge</h3>
+            <p class="tl-card__subtitle">Officer Cadet School (OCS) — Digital &amp; Intelligence Service</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Graduated top of cohort with Sword of Honour and Best in Knowledge awards across all technical assessments</li>
+                <li>Led a platoon of 80+ cadets through cybersecurity training exercises and operational planning</li>
+                <li>Completed 9 months of intensive coursework in Computer Networks, OS Internals (Linux), ICS/OT Security, and Penetration Testing</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2022 — 2023 -->
+        <div class="tl-year">2022 — 2023</div>
+
+        <div class="tl-item" data-category="project">
+          <div class="tl-dot tl-dot--violet"></div>
+          <div class="tl-card tl-card--violet">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--violet">Project</span>
+              <span class="tl-date">2022 — 2023</span>
+            </div>
+            <h3 class="tl-card__title">Surgical Tool Verification via Computer Vision</h3>
+            <p class="tl-card__subtitle">Research collaboration with Dr. Tang Kok Zuea, NUS</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Co-developed a CNN-based system to automate post-surgical instrument verification, reducing manual count time by 98%</li>
+                <li>Awarded Bronze at the Singapore Science &amp; Engineering Fair (SSEF)</li>
+              </ul>
+              <div class="tl-tech">
+                <span class="tl-tech__tag">Python</span>
+                <span class="tl-tech__tag">OpenCV</span>
+                <span class="tl-tech__tag">TensorFlow</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item" data-category="project">
+          <div class="tl-dot tl-dot--violet"></div>
+          <div class="tl-card tl-card--violet">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--violet">Project</span>
+              <span class="tl-date">2023</span>
+            </div>
+            <h3 class="tl-card__title">Self-Sorting Recycling Bin</h3>
+            <p class="tl-card__subtitle">Hardware prototype — sensor-driven waste classification</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Designed a multi-sensor prototype that classifies and routes waste in real time, reducing recyclable contamination rates</li>
+                <li>Top 5 finish at NTU Young Innovator Challenge</li>
+              </ul>
+              <div class="tl-tech">
+                <span class="tl-tech__tag">Arduino</span>
+                <span class="tl-tech__tag">Sensor Fusion</span>
+                <span class="tl-tech__tag">C++</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tl-item" data-category="project">
+          <div class="tl-dot tl-dot--violet"></div>
+          <div class="tl-card tl-card--violet">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--violet">Project</span>
+              <span class="tl-date">2022</span>
+            </div>
+            <h3 class="tl-card__title">EatBah</h3>
+            <p class="tl-card__subtitle">iOS app — hyperlocal food waste marketplace</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Built a native iOS app connecting food vendors with nearby consumers to redistribute surplus food in real time</li>
+                <li>2nd Runner-up at SUSS SBIZ Business Plan Competition</li>
+              </ul>
+              <div class="tl-tech">
+                <span class="tl-tech__tag">Swift</span>
+                <span class="tl-tech__tag">SwiftUI</span>
+                <span class="tl-tech__tag">Firebase</span>
+                <span class="tl-tech__tag">MapKit</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2021 -->
+        <div class="tl-year">2021</div>
+
+        <div class="tl-item" data-category="experience">
+          <div class="tl-dot tl-dot--emerald"></div>
+          <div class="tl-card tl-card--emerald">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--emerald">Experience</span>
+              <span class="tl-date">2021 — 2022</span>
+            </div>
+            <h3 class="tl-card__title">Full-Stack Developer</h3>
+            <p class="tl-card__subtitle">Tenopy — Ed-Tech Startup</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Shipped end-to-end features for an online classroom platform, from wireframes through production deployment across frontend and backend</li>
+                <li>Built responsive, accessible UI components that maintained reliability under live classroom load</li>
+              </ul>
+              <div class="tl-tech">
+                <span class="tl-tech__tag">React</span>
+                <span class="tl-tech__tag">Node.js</span>
+                <span class="tl-tech__tag">REST APIs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2020 -->
+        <div class="tl-year">2020</div>
+
+        <div class="tl-item" data-category="leadership">
+          <div class="tl-dot tl-dot--orange"></div>
+          <div class="tl-card tl-card--orange">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--orange">Leadership</span>
+              <span class="tl-date">2020 — 2021</span>
+            </div>
+            <h3 class="tl-card__title">Project Head — Project Integrate</h3>
+            <p class="tl-card__subtitle">Community impact initiative for migrant worker inclusion</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>Led a cross-functional team to design and launch an inclusion campaign for migrant workers; awarded Best Project among 100+ cohort teams</li>
+                <li>Built and deployed the initiative's website end-to-end, driving online fundraising and awareness</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2018 -->
+        <div class="tl-year">2018</div>
+
+        <div class="tl-item" data-category="education">
+          <div class="tl-dot tl-dot--blue"></div>
+          <div class="tl-card tl-card--blue">
+            <div class="tl-card__header">
+              <span class="tl-tag tl-tag--blue">Education</span>
+              <span class="tl-date">Jan. 2018 — Dec. 2023</span>
+            </div>
+            <h3 class="tl-card__title">Hwa Chong Institution</h3>
+            <p class="tl-card__subtitle">GCE A-Levels | Rank Points: 90/90 (Straight As)</p>
+            <p class="tl-card__location">Singapore</p>
+            <div class="tl-card__details">
+              <ul>
+                <li>H2 Physics, H2 Chemistry, H2 Mathematics, H2 Economics, H1 General Paper, H1 Project Work — all A grades</li>
+                <li>Cybersecurity Wing Lead, Infocomm &amp; Robotics Society — authored challenges for Sieberrsec CTF (500+ participants; backed by DIS, DSO, Smart Nation)</li>
+                <li>Top 10 out of 4,300+ participants at Brainhack CTF (2022, 2023)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Skills -->
+      <div class="skills-section">
+        <h2 class="skills-title">Technical Skills</h2>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <h4 class="skill-category__label">Languages</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">C++</span>
+              <span class="skill-tag">JavaScript</span>
+              <span class="skill-tag">Swift</span>
+              <span class="skill-tag">SQL</span>
+            </div>
+          </div>
+          <div class="skill-category">
+            <h4 class="skill-category__label">Frameworks</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">React</span>
+              <span class="skill-tag">Node.js</span>
+              <span class="skill-tag">Flask</span>
+              <span class="skill-tag">FastAPI</span>
+              <span class="skill-tag">SwiftUI</span>
+              <span class="skill-tag">Firebase</span>
+            </div>
+          </div>
+          <div class="skill-category">
+            <h4 class="skill-category__label">Developer Tools</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">Linux</span>
+              <span class="skill-tag">Git</span>
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">Bash</span>
+              <span class="skill-tag">VS Code</span>
+              <span class="skill-tag">Xcode</span>
+            </div>
+          </div>
+          <div class="skill-category">
+            <h4 class="skill-category__label">Security / Networking</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">Cryptography</span>
+              <span class="skill-tag">Wireshark</span>
+              <span class="skill-tag">Scapy</span>
+              <span class="skill-tag">nmap</span>
+              <span class="skill-tag">Volatility</span>
+              <span class="skill-tag">Pen Testing</span>
+              <span class="skill-tag">ICS/OT</span>
+            </div>
+          </div>
+          <div class="skill-category">
+            <h4 class="skill-category__label">Data / ML</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">TensorFlow</span>
+              <span class="skill-tag">OpenCV</span>
+              <span class="skill-tag">pandas</span>
+              <span class="skill-tag">NumPy</span>
+              <span class="skill-tag">scikit-learn</span>
+            </div>
+          </div>
+          <div class="skill-category">
+            <h4 class="skill-category__label">Hardware</h4>
+            <div class="skill-tags">
+              <span class="skill-tag">Arduino</span>
+              <span class="skill-tag">Sensors</span>
+              <span class="skill-tag">Breadboard Wiring</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .resume-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+    flex-wrap: wrap;
+  }
+
+  .page-subtitle {
+    margin-top: var(--space-sm);
+    font-size: 1.0625rem;
+  }
+
+  /* Filter tabs */
+  .tl-filters {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-3xl);
+    flex-wrap: wrap;
+  }
+
+  .tl-filter {
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tl-filter:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+  }
+
+  .tl-filter.active {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  /* Year markers */
+  .tl-year {
+    position: relative;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-xl);
+    margin-left: -2rem;
+    padding-left: 2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .tl-year::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    border: 2px solid var(--text-tertiary);
+  }
+
+  /* Timeline items */
+  .tl-item {
+    position: relative;
+    margin-bottom: var(--space-xl);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .tl-item.hidden {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .tl-dot {
+    position: absolute;
+    left: -2rem;
+    top: 1.25rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transform: translateX(-0.5px);
+    z-index: 1;
+    transition: scale 0.2s ease;
+  }
+
+  .tl-item:hover .tl-dot {
+    scale: 1.5;
+  }
+
+  .tl-dot--blue { background: var(--accent-blue); }
+  .tl-dot--emerald { background: var(--accent-emerald); }
+  .tl-dot--orange { background: var(--accent-orange); }
+  .tl-dot--violet { background: var(--accent-violet); }
+
+  /* Cards */
+  .tl-card {
+    --card-accent: var(--accent-blue);
+    --card-accent-soft: var(--accent-blue-soft);
+    --card-accent-glow: var(--accent-blue-glow);
+    position: relative;
+    isolation: isolate;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+  }
+
+  /* Spinning gradient border */
+  .tl-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--glow-angle, 0deg),
+      var(--card-accent),
+      transparent 25%,
+      transparent 75%,
+      var(--card-accent)
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Soft radial glow */
+  .tl-card::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 50%;
+    aspect-ratio: 1;
+    background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
+    transform: translate(-20%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: -1;
+  }
+
+  .tl-card:hover {
+    transform: translateY(-2px);
+    border-color: transparent;
+    box-shadow: 0 12px 32px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
+  }
+
+  .tl-card:hover::before {
+    opacity: 1;
+    animation: glowSpin 4s linear infinite;
+  }
+
+  .tl-card:hover::after {
+    opacity: 0.5;
+  }
+
+  .tl-card--blue { --card-accent: var(--accent-blue); --card-accent-soft: var(--accent-blue-soft); --card-accent-glow: var(--accent-blue-glow); }
+  .tl-card--emerald { --card-accent: var(--accent-emerald); --card-accent-soft: var(--accent-emerald-soft); --card-accent-glow: var(--accent-emerald-glow); }
+  .tl-card--orange { --card-accent: var(--accent-orange); --card-accent-soft: var(--accent-orange-soft); --card-accent-glow: var(--accent-orange-glow); }
+  .tl-card--violet { --card-accent: var(--accent-violet); --card-accent-soft: var(--accent-violet-soft); --card-accent-glow: var(--accent-violet-glow); }
+
+  .tl-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .tl-tag {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tl-tag--blue { background: var(--accent-blue-soft); color: var(--accent-blue); }
+  .tl-tag--emerald { background: var(--accent-emerald-soft); color: var(--accent-emerald); }
+  .tl-tag--orange { background: var(--accent-orange-soft); color: var(--accent-orange); }
+  .tl-tag--violet { background: var(--accent-violet-soft); color: var(--accent-violet); }
+
+  .tl-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+  }
+
+  .tl-card__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
+
+  .tl-card__subtitle {
+    font-size: 0.9375rem;
+    color: var(--accent-blue);
+    margin-bottom: 0;
+  }
+
+  .tl-card__location {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: var(--space-xs);
+    margin-bottom: 0;
+  }
+
+  /* Expandable details */
+  .tl-card__details {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.35s ease;
+    margin-top: 0;
+  }
+
+  .tl-card:hover .tl-card__details,
+  .tl-card.expanded .tl-card__details {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: var(--space-md);
+  }
+
+  .tl-card__details ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tl-card__details li {
+    position: relative;
+    padding-left: var(--space-lg);
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    line-height: 1.6;
+  }
+
+  .tl-card__details li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--text-tertiary);
+  }
+
+  .tl-card__details li:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Tech tags inside details */
+  .tl-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-md);
+  }
+
+  .tl-tech__tag {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+  }
+
+  /* Skills section */
+  .skills-section {
+    margin-top: var(--space-4xl);
+    padding-top: var(--space-3xl);
+    border-top: 2px solid var(--border);
+  }
+
+  .skills-title {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .skill-category__label {
+    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .skill-tag {
+    font-size: 0.8125rem;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .skill-tag:hover {
+    border-color: var(--accent-blue);
+    color: var(--text-primary);
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .timeline {
+      padding-left: 1.5rem;
+    }
+
+    .tl-year {
+      margin-left: -1.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .tl-dot {
+      left: -1.5rem;
+    }
+
+    .timeline::before {
+      left: 5px;
+    }
+
+    .tl-card__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .skills-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<script>
+  // Filter functionality
+  document.querySelectorAll('.tl-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tl-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+      const items = document.querySelectorAll('.tl-item');
+      const years = document.querySelectorAll('.tl-year');
+
+      items.forEach(item => {
+        if (filter === 'all' || item.dataset.category === filter) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      // Hide year markers with no visible items after them
+      years.forEach(year => {
+        let next = year.nextElementSibling;
+        let hasVisible = false;
+        while (next && !next.classList.contains('tl-year')) {
+          if (next.classList.contains('tl-item') && !next.classList.contains('hidden')) {
+            hasVisible = true;
+            break;
+          }
+          next = next.nextElementSibling;
+        }
+        year.style.display = hasVisible ? '' : 'none';
+      });
+    });
+  });
+
+  // Toggle expand on click (for touch devices)
+  document.querySelectorAll('.tl-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('expanded');
+    });
+  });
+</script>
