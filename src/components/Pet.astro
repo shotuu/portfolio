@@ -282,14 +282,19 @@ const eyeRowH = pixelSize;        // 4
     isAnimating = true;
 
     let velocityY = 0;
-    const gravity = 0.6;
+    const gravity = 900; // px/s²
     const bounceDamping = 0.4;
     const floorY = window.innerHeight - catHeight - 16;
     let hasHitFloor = false;
+    let lastTime = 0;
 
-    function physicsStep() {
-      velocityY += gravity;
-      currentY += velocityY;
+    function physicsStep(now: number) {
+      if (!lastTime) { lastTime = now; animFrame = requestAnimationFrame(physicsStep); return; }
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+
+      velocityY += gravity * dt;
+      currentY += velocityY * dt;
 
       if (currentY >= floorY) {
         currentY = floorY;
@@ -304,7 +309,7 @@ const eyeRowH = pixelSize;        // 4
 
         velocityY = -velocityY * bounceDamping;
 
-        if (Math.abs(velocityY) < 1.5) {
+        if (Math.abs(velocityY) < 50) {
           currentY = floorY;
           updatePosition();
           setTimeout(() => walkHome(), 800);
@@ -324,19 +329,24 @@ const eyeRowH = pixelSize;        // 4
     if (!pet) return;
     const targetX = homeX;
     const targetY = window.innerHeight - catHeight - 16;
-    const speed = 1.5;
+    const pxPerSec = 100; // frame-rate independent speed
+    let lastTime = 0;
 
     if (petBody) {
       petBody.style.transform = targetX < currentX ? 'scaleX(-1)' : 'scaleX(1)';
     }
     pet.classList.add('crawling');
 
-    function step() {
+    function step(now: number) {
+      if (!lastTime) { lastTime = now; animFrame = requestAnimationFrame(step); return; }
+      const dt = Math.min((now - lastTime) / 1000, 0.1); // cap at 100ms to avoid jumps
+      lastTime = now;
       const dx = targetX - currentX;
       const dy = targetY - currentY;
       const dist = Math.sqrt(dx * dx + dy * dy);
+      const move = pxPerSec * dt;
 
-      if (dist < speed) {
+      if (dist < move) {
         currentX = targetX;
         currentY = targetY;
         updatePosition();
@@ -347,8 +357,8 @@ const eyeRowH = pixelSize;        // 4
         return;
       }
 
-      currentX += (dx / dist) * speed;
-      currentY += (dy / dist) * speed;
+      currentX += (dx / dist) * move;
+      currentY += (dy / dist) * move;
       updatePosition();
       animFrame = requestAnimationFrame(step);
     }
