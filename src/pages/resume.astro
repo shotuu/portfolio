@@ -55,18 +55,20 @@ const base = import.meta.env.BASE_URL;
               <span class="tl-tag tl-tag--emerald">Experience</span>
               <span class="tl-date">Sep. 2025 — Present</span>
             </div>
-            <h3 class="tl-card__title">Infrastructure Engineer</h3>
+            <h3 class="tl-card__title">Infrastructure Organizer</h3>
             <p class="tl-card__subtitle">LA CTF — UCLA ACM Cybersecurity</p>
             <p class="tl-card__location">Los Angeles, CA</p>
             <div class="tl-card__details">
               <ul>
-                <li>Building and maintaining competition infrastructure for one of the largest student-run CTF events in the U.S.</li>
-                <li>Architecting containerized challenge deployment and real-time scoring systems to handle thousands of concurrent participants</li>
+                <li>Architected and shipped GCP-based competition infrastructure (Cloud Run frontend, GKE challenge cluster, Cloud SQL, Redis on GCE) supporting thousands of concurrent participants</li>
+                <li>Built autoscaling Kubernetes deployment with Traefik ingress, cert-manager + Cloudflare DNS-01 for wildcard TLS, and KubeIP for static node addressing; hardened firewall rules to prevent pre-CTF subdomain leakage</li>
+                <li>Deployed CI/CD on GitHub Actions via GCP Workload Identity Federation (eliminating long-lived service-account keys); maintained custom forks of rCTF, rCDS, and cyber-instancer powering per-team challenge instances</li>
               </ul>
               <div class="tl-tech">
-                <span class="tl-tech__tag">Docker</span>
-                <span class="tl-tech__tag">Infrastructure</span>
-                <span class="tl-tech__tag">CTF</span>
+                <span class="tl-tech__tag">GCP</span>
+                <span class="tl-tech__tag">Kubernetes</span>
+                <span class="tl-tech__tag">Traefik</span>
+                <span class="tl-tech__tag">GitHub Actions</span>
               </div>
             </div>
           </div>
@@ -87,8 +89,9 @@ const base = import.meta.env.BASE_URL;
             <p class="tl-card__location">Singapore</p>
             <div class="tl-card__details">
               <ul>
-                <li>Built automated OSINT-to-TTP pipelines using Python and LLM-assisted parsing, generating MITRE ATT&CK heat maps that cut analyst triage time by over 40%</li>
-                <li>Engineered fault-tolerant web crawlers with structured output validation and QA checks, sustaining high precision/recall across evolving threat data</li>
+                <li>Designed and shipped an OSINT-to-TTP automation pipeline (Python + LLM-assisted parsing) ingesting 50+ daily sources and mapping adversary behaviors into ATT&CK-aligned heat maps and temporal views</li>
+                <li>Reduced analyst review time from a half-day workflow to under 5 minutes (&gt;95% reduction); pipeline deployed operationally and adopted department-wide</li>
+                <li>Engineered fault-tolerant crawlers, structured-output validators, and QA layers; ran comparative evaluations to maintain precision/recall as source coverage scaled</li>
               </ul>
               <div class="tl-tech">
                 <span class="tl-tech__tag">Python</span>
