@@ -9,6 +9,13 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: 'Hatch',
+    description: 'A group-chat planning prototype built at LA Hacks 2026. Hatch gives a friend group\'s chat a living "nest" that cools during silence and warms up when the group books a plan together — synthesizing event suggestions, running group approval, and writing confirmed plans to everyone\'s Google Calendar.',
+    tags: ['Python', 'FastAPI', 'LangGraph', 'Fetch.ai uAgents', 'React', 'TypeScript', 'LA Hacks 2026'],
+    github: 'https://github.com/shotuu/hatch',
+    featured: true,
+  },
+  {
     title: 'Whales Chat',
     description: 'A real-time chat platform built with Flask and Socket.IO. Features user authentication, persistent message history in SQLite, an admin dashboard, and CSV export of chat logs.',
     tags: ['Python', 'Flask', 'Socket.IO', 'SQLite'],
