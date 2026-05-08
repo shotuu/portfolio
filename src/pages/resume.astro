@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Resume">
@@ -11,7 +10,7 @@ const base = import.meta.env.BASE_URL;
           <h1>Resume</h1>
           <p class="page-subtitle">My journey so far. Hover or tap any entry to learn more.</p>
         </div>
-        <a href={`${base}/daniel_wu_cv.pdf`} download class="btn btn--primary">Download PDF &darr;</a>
+        <a href="/daniel_wu_cv.pdf" download class="btn btn--primary">Download PDF &darr;</a>
       </div>
 
       <!-- Filter tabs -->
