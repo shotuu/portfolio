@@ -30,11 +30,11 @@ This was easily the most fun part of the whole build. It gave me an excuse to st
 
 If you haven't noticed yet, there's a cute little cat in the bottom-left corner of your screen. You can click it for points. You can drag it around. You can also drop it, which I'm told is a bit mean, but it always walks itself home.
 
-There's also a [cosmetics page](/portfolio/cosmetics) where you can dress it up with hats, glasses, capes, and more. Make the cat your own.
+There's also a [cosmetics page](/cosmetics) where you can dress it up with hats, glasses, capes, and more. Make the cat your own.
 
 ## The resume, but alive
 
-Instead of slapping a static PDF on the site and calling it a day, I turned my [resume](/portfolio/resume) into an interactive vertical timeline. You can filter it by category, hover on any entry to expand the details, and poke around at your own pace. The PDF is still there if you want it — but I think this version is way more fun to read.
+Instead of slapping a static PDF on the site and calling it a day, I turned my [resume](/resume) into an interactive vertical timeline. You can filter it by category, hover on any entry to expand the details, and poke around at your own pace. The PDF is still there if you want it — but I think this version is way more fun to read.
 
 ## What's next
 
