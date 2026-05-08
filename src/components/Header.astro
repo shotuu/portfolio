@@ -1,19 +1,18 @@
 ---
-const base = import.meta.env.BASE_URL;
 const currentPath = Astro.url.pathname;
 
 const navLinks = [
-  { href: base, label: 'Home' },
-  { href: `${base}/projects`, label: 'Projects' },
-  { href: `${base}/blog`, label: 'Blog' },
-  { href: `${base}/resume`, label: 'Resume' },
-  { href: `${base}/contact`, label: 'Contact' },
+  { href: '/', label: 'Home' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/resume', label: 'Resume' },
+  { href: '/contact', label: 'Contact' },
 ];
 ---
 
 <header class="site-header">
   <nav class="site-nav container container--wide">
-    <a href={base} class="site-logo" aria-label="Home">
+    <a href="/" class="site-logo" aria-label="Home">
       <span class="site-logo__text">dw<span class="site-logo__dot">.</span></span>
     </a>
 
@@ -26,7 +25,7 @@ const navLinks = [
           {link.label}
         </a>
       ))}
-      <a href={`${base}/hidden-9m4n3c`} class="nav-link secret-nav-link">???</a>
+      <a href="/hidden-9m4n3c" class="nav-link secret-nav-link">???</a>
     </div>
 
     <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">

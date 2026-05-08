@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title="Secret">
@@ -10,7 +9,7 @@ const base = import.meta.env.BASE_URL;
         <h1>&#128274;</h1>
         <p>This page is locked.</p>
         <p class="secret-hint">Unlock it from the shop for 100 points.</p>
-        <a href={base} class="btn">Go Home</a>
+        <a href="/" class="btn">Go Home</a>
       </div>
 
       <div class="secret-content" id="secret-content" style="display: none;">
