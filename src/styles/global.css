@@ -108,7 +108,9 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  scrollbar-gutter: stable both-edges;
+  background-color: var(--bg-primary);
+  scrollbar-gutter: stable;
+  transition: background-color var(--transition-base);
 }
 
 body {
