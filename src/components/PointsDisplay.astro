@@ -13,7 +13,7 @@
   </button>
 
   <!-- Theme toggle (unlockable) -->
-  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+  <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light mode">
     <span class="theme-toggle__sun">&#9788;</span>
     <span class="theme-toggle__moon">&#9790;</span>
   </button>
@@ -25,8 +25,19 @@
     document.getElementById('shop-overlay')?.classList.toggle('open');
   });
 
+  const themeToggle = document.getElementById('theme-toggle');
+  const updateThemeToggleLabel = () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    themeToggle?.setAttribute(
+      'aria-label',
+      current === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
+  };
+
+  updateThemeToggleLabel();
+
   // Theme toggle — force uniform transition so every element fades together
-  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+  themeToggle?.addEventListener('click', () => {
     // 1. Apply uniform transition rules
     document.documentElement.classList.add('theme-switching');
     // 2. Force reflow so browser commits the new transition rules
@@ -36,6 +47,7 @@
     const next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('dw_theme', next);
+    updateThemeToggleLabel();
     window.dispatchEvent(new CustomEvent('theme-changed'));
     // 4. Remove override after transition completes so normal hovers work
     setTimeout(() => {
@@ -118,6 +130,7 @@
     align-self: flex-end;
     position: relative;
     overflow: hidden;
+    color: var(--text-primary);
   }
 
   .theme-toggle:hover {
@@ -130,19 +143,26 @@
     transition: all var(--transition-fast);
   }
 
-  .theme-toggle__moon {
-    opacity: 0;
-    transform: rotate(90deg) scale(0);
-  }
-
-  [data-theme="dark"] .theme-toggle__sun {
+  .theme-toggle__sun {
     opacity: 0;
     transform: rotate(-90deg) scale(0);
   }
 
-  [data-theme="dark"] .theme-toggle__moon {
+  .theme-toggle__moon {
     opacity: 1;
     transform: rotate(0deg) scale(1);
+  }
+
+  :global([data-theme="dark"]) .theme-toggle__sun {
+    opacity: 1;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+    transform: rotate(0deg) scale(1);
+  }
+
+  :global([data-theme="dark"]) .theme-toggle__moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0);
   }
 
   .confetti-btn {

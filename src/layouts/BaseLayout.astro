@@ -16,7 +16,7 @@ const { title, description = "Daniel Wu — CS student, builder, hacker." } = As
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,8 +26,8 @@ const { title, description = "Daniel Wu — CS student, builder, hacker." } = As
   <script is:inline>
     (function() {
       try {
-        var theme = localStorage.getItem('dw_theme');
-        if (theme) document.documentElement.setAttribute('data-theme', theme);
+        var theme = localStorage.getItem('dw_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
       } catch(e) {}
     })();
   </script>
