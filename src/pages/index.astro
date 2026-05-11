@@ -464,6 +464,24 @@ const recentPosts = allPosts
     isolation: isolate;
   }
 
+  .hero-text::before {
+    content: '';
+    position: absolute;
+    left: 42%;
+    top: 48%;
+    width: min(520px, 120%);
+    aspect-ratio: 1.35;
+    background:
+      radial-gradient(ellipse at 44% 42%, rgba(37, 99, 235, 0.28), transparent 58%),
+      radial-gradient(ellipse at 62% 56%, rgba(124, 58, 237, 0.18), transparent 60%),
+      radial-gradient(ellipse at 34% 68%, rgba(16, 185, 129, 0.12), transparent 58%);
+    filter: blur(34px);
+    opacity: 0.78;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
   .hero-photo {
     flex-shrink: 0;
   }
@@ -501,39 +519,14 @@ const recentPosts = allPosts
     color: var(--accent-blue);
     display: block;
     margin-bottom: var(--space-sm);
-    text-shadow: 0 0 18px var(--accent-blue-glow);
+    text-shadow: 0 0 14px var(--accent-blue-glow);
   }
 
   .hero-name {
-    position: relative;
-    display: inline-block;
     margin-bottom: var(--space-md);
     text-shadow:
-      0 0 24px var(--accent-blue-glow),
-      0 0 48px var(--accent-violet-glow);
-  }
-
-  .hero-name::before {
-    content: '';
-    position: absolute;
-    inset: 8% -0.28em 2% -0.16em;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(37, 99, 235, 0.34) 22%,
-      rgba(124, 58, 237, 0.26) 54%,
-      rgba(16, 185, 129, 0.18) 78%,
-      transparent 100%
-    );
-    filter: blur(24px);
-    opacity: 0.82;
-    transform: translateY(0.08em);
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  :global([data-theme="dark"]) .hero-name::before {
-    opacity: 1;
+      0 0 18px var(--accent-blue-glow),
+      0 0 38px var(--accent-violet-glow);
   }
 
   .hero-dot {
