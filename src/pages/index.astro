@@ -460,6 +460,8 @@ const recentPosts = allPosts
 
   .hero-text {
     flex: 1;
+    position: relative;
+    isolation: isolate;
   }
 
   .hero-photo {
@@ -499,10 +501,39 @@ const recentPosts = allPosts
     color: var(--accent-blue);
     display: block;
     margin-bottom: var(--space-sm);
+    text-shadow: 0 0 18px var(--accent-blue-glow);
   }
 
   .hero-name {
+    position: relative;
+    display: inline-block;
     margin-bottom: var(--space-md);
+    text-shadow:
+      0 0 24px var(--accent-blue-glow),
+      0 0 48px var(--accent-violet-glow);
+  }
+
+  .hero-name::before {
+    content: '';
+    position: absolute;
+    inset: 8% -0.28em 2% -0.16em;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(37, 99, 235, 0.34) 22%,
+      rgba(124, 58, 237, 0.26) 54%,
+      rgba(16, 185, 129, 0.18) 78%,
+      transparent 100%
+    );
+    filter: blur(24px);
+    opacity: 0.82;
+    transform: translateY(0.08em);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  :global([data-theme="dark"]) .hero-name::before {
+    opacity: 1;
   }
 
   .hero-dot {
