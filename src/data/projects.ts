@@ -9,6 +9,13 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: 'Synth',
+    description: 'A privacy-first, context-aware meeting and note-taking assistant (a fork of Meetily). Synth transcribes meetings, lectures, and conversations fully on-device with real speaker diarization, then generates AI summaries shaped to what you were doing — a meeting, a lecture, or a study group — with no audio or transcript ever leaving your machine unless you opt into a cloud provider.',
+    tags: ['Rust', 'Tauri 2', 'Next.js', 'TypeScript', 'Whisper.cpp', 'ONNX', 'SQLite'],
+    github: 'https://github.com/shotuu/synth',
+    featured: true,
+  },
+  {
     title: 'Hatch',
     description: 'A group-chat planning prototype built at LA Hacks 2026. Hatch gives a friend group\'s chat a living "nest" that cools during silence and warms up when the group books a plan together — synthesizing event suggestions, running group approval, and writing confirmed plans to everyone\'s Google Calendar.',
     tags: ['Python', 'FastAPI', 'LangGraph', 'Fetch.ai uAgents', 'React', 'TypeScript', 'LA Hacks 2026'],
