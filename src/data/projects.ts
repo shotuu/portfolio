@@ -9,6 +9,13 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    title: 'Telos',
+    description: 'A precision protocol tracker for people who take their regimens seriously. Telos builds dosing stacks from a 43+ compound reference library, handles reconstitution and syringe-draw math automatically, and pairs it with an AI research assistant that answers questions with cited sources. Offline-first PWA — your data lives on-device first and syncs when you sign in.',
+    tags: ['React', 'Vite', 'Node.js', 'Express', 'Prisma', 'PostgreSQL', 'Claude API', 'PWA'],
+    link: 'https://telostrack.com',
+    featured: true,
+  },
+  {
     title: 'Synth',
     description: 'A privacy-first, context-aware meeting and note-taking assistant (a fork of Meetily). Synth transcribes meetings, lectures, and conversations fully on-device with real speaker diarization, then generates AI summaries shaped to what you were doing — a meeting, a lecture, or a study group — with no audio or transcript ever leaving your machine unless you opt into a cloud provider.',
     tags: ['Rust', 'Tauri 2', 'Next.js', 'TypeScript', 'Whisper.cpp', 'ONNX', 'SQLite'],
