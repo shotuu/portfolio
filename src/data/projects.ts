@@ -43,4 +43,11 @@ export const projects: Project[] = [
     github: 'https://github.com/shotuu/SAFTI-Update',
     featured: false,
   },
+  {
+    title: 'shotu-dotfiles',
+    description: 'A cross-platform terminal and Neovim setup for macOS, Linux, and Windows (native + WSL): WezTerm, tmux, Neovim, and Starship under a consistent Rosé Pine Moon theme, with platform-adaptive installer scripts that detect the OS and wire up Homebrew/zsh or winget/PowerShell accordingly.',
+    tags: ['Lua', 'Shell', 'PowerShell', 'WezTerm', 'Neovim', 'tmux', 'Homebrew'],
+    github: 'https://github.com/shotuu/dotfiles',
+    featured: false,
+  },
 ];
