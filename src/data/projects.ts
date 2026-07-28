@@ -50,4 +50,11 @@ export const projects: Project[] = [
     github: 'https://github.com/shotuu/dotfiles',
     featured: false,
   },
+  {
+    title: 'Pulse',
+    description: 'A live file tree for watching a repo change in real time — every add, edit, delete, and rename since your last commit, rendered the instant it happens. Built for watching AI coding agents work through a codebase, with a scrollable, syntax-highlighted diff view and a one-command installer.',
+    tags: ['Node.js', 'React', 'Ink', 'Chokidar', 'CLI'],
+    github: 'https://github.com/shotuu/pulse',
+    featured: false,
+  },
 ];
