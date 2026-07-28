@@ -49,7 +49,7 @@ const other = projects.filter(p => !p.featured);
           <h3 class="project-section__title">Other Projects</h3>
           <div class="projects-grid">
             {other.map(project => (
-              <div class="card project-card">
+              <div class="card project-card project-card--other">
                 <h3 class="card__title">{project.title}</h3>
                 <p class="card__description">{project.description}</p>
                 <div class="card__tags">
@@ -107,6 +107,18 @@ const other = projects.filter(p => !p.featured);
 
   .project-card--featured {
     border-color: var(--accent-blue-soft);
+  }
+
+  /* Not featured shouldn't mean invisible: a visible (if quieter) border and
+     a slightly lifted background keep these from disappearing into the page
+     at rest, while the neutral (rather than blue) hover glow keeps them
+     read as secondary to the featured cards. */
+  .project-card--other {
+    border-color: var(--border);
+    background: var(--bg-secondary);
+    --card-accent: var(--text-tertiary);
+    --card-accent-soft: var(--bg-tertiary);
+    --card-accent-glow: var(--accent-neutral-glow);
   }
 
   .project-card__links {
