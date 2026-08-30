@@ -249,42 +249,6 @@ const recentPosts = allPosts
     </div>
   </section>
 
-  <!-- Now Section -->
-  <section class="now section">
-    <div class="container">
-      <div class="now-header">
-        <h2 class="section-heading">/now</h2>
-        <span class="now-status">
-          <span class="now-status__dot"></span>
-          Last updated April 2026
-        </span>
-      </div>
-      <p class="now-sub">A snapshot of what I'm up to right now.</p>
-      <div class="now-grid">
-        <div class="now-card now-card--blue">
-          <span class="now-card__icon">&#127891;</span>
-          <span class="now-card__label">Studying</span>
-          <p class="now-card__value">Freshman year @ UCLA — Spring 2026 quarter</p>
-        </div>
-        <div class="now-card now-card--emerald">
-          <span class="now-card__icon">&#128736;</span>
-          <span class="now-card__label">Building</span>
-          <p class="now-card__value">SWE intern at Scalence Labs — n8n automation pipelines for creator acquisition</p>
-        </div>
-        <div class="now-card now-card--orange">
-          <span class="now-card__icon">&#128218;</span>
-          <span class="now-card__label">Learning</span>
-          <p class="now-card__value">Reverse engineering and ICS/OT security</p>
-        </div>
-        <div class="now-card now-card--violet">
-          <span class="now-card__icon">&#127911;</span>
-          <span class="now-card__label">Listening to</span>
-          <p class="now-card__value">Progressive House and Dubstep, and the occasional indie track</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- Contact CTA -->
   <section class="cta section">
     <div class="container">
@@ -429,7 +393,7 @@ const recentPosts = allPosts
 </script>
 
 <style>
-  /* Compact spacing for stacked About / Featured / Now sections */
+  /* Compact spacing for stacked About / Featured sections */
   .section--tight {
     padding-top: var(--space-xl);
     padding-bottom: var(--space-xl);
@@ -769,128 +733,6 @@ const recentPosts = allPosts
   .carousel-dot.active {
     background: var(--accent-blue);
     transform: scale(1.3);
-  }
-
-  /* Now Section */
-  .now-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-    margin-bottom: var(--space-sm);
-  }
-
-  .now-header .section-heading {
-    margin-bottom: 0;
-  }
-
-  .now-status {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    padding: var(--space-xs) var(--space-md);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-full);
-    background: var(--bg-secondary);
-  }
-
-  .now-status__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent-emerald);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
-    animation: nowPulse 2s ease-out infinite;
-  }
-
-  @keyframes nowPulse {
-    0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-    70%  { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-  }
-
-  .now-sub {
-    margin-top: 0;
-    margin-bottom: var(--space-xl);
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-  }
-
-  .now-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: var(--space-lg);
-  }
-
-  .now-card {
-    position: relative;
-    padding: var(--space-lg);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
-  }
-
-  .now-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity var(--transition-base);
-    background: linear-gradient(135deg, var(--now-accent-soft, transparent), transparent 60%);
-  }
-
-  .now-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--now-accent, var(--border));
-    box-shadow: var(--shadow-md);
-  }
-
-  .now-card:hover::before {
-    opacity: 1;
-  }
-
-  .now-card--blue    { --now-accent: var(--accent-blue);    --now-accent-soft: var(--accent-blue-soft); }
-  .now-card--emerald { --now-accent: var(--accent-emerald); --now-accent-soft: var(--accent-emerald-soft); }
-  .now-card--orange  { --now-accent: var(--accent-orange);  --now-accent-soft: var(--accent-orange-soft); }
-  .now-card--violet  { --now-accent: var(--accent-violet);  --now-accent-soft: var(--accent-violet-soft); }
-
-  .now-card__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-md);
-    background: var(--now-accent-soft);
-    font-size: 1.125rem;
-    margin-bottom: var(--space-md);
-  }
-
-  .now-card__label {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.6875rem;
-    color: var(--now-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: var(--space-xs);
-    font-weight: 600;
-  }
-
-  .now-card__value {
-    font-size: 0.9375rem;
-    color: var(--text-primary);
-    margin: 0;
-    max-width: none;
-    line-height: 1.5;
   }
 
   /* Recent */
