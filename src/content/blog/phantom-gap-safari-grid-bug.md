@@ -1,42 +1,85 @@
 ---
-title: "The Gap That Wasn't Supposed to Be There"
+title: "The 39 Pixels That Shouldn't Exist"
 slug: "phantom-gap-safari-grid-bug"
 date: "2026-08-31"
-description: "A CSS grid on Telos looked fine everywhere except my own phone. Five fixes later, it turned out to be two separate Safari bugs stacked on top of each other."
+description: "A card grid in Telos looked perfect on every device except the one in my own pocket. Five failed fixes and a very late night with Safari's remote inspector later, I found exactly where the missing 39 pixels were hiding."
 tags: ["web dev", "css", "safari", "debugging", "telos"]
 ---
 
-I spent most of a day chasing a bug that, as far as I can tell, doesn't exist anywhere on the internet. Not in a GitHub issue, not in a WebKit bug report, not in a random Stack Overflow answer from 2019. I only found it because I happened to have an iPhone in my pocket and a Mac to plug it into.
+It was close to midnight and I was doing the thing every developer does right before bed: scrolling through their own app, half looking for bugs, half just admiring the thing they built. I found a bug. One of the cards in my compound library had what looked like an entire extra card's worth of empty space sitting underneath it, for absolutely no reason I could see.
 
-This is the story of that bug, mostly so that if you ever hit the same thing, you can skip the five hours I spent hitting everything else first.
+I closed the app, told myself I'd look at it in the morning, and then obviously did not do that. I stayed up chasing it instead, and it took most of the next day too. As far as I can tell, this exact bug isn't written down anywhere: not in a GitHub issue, not in a WebKit bug report, not in some forgotten Stack Overflow answer from 2019. I only found the actual cause because I happened to own an iPhone and a Mac to plug it into, which turned out to be the whole trick.
+
+This is that story, mostly so that if you ever run into the same thing, you can skip straight past the five things I tried that didn't work.
 
 ## The setup
 
-[Telos](/projects) has a compound library page: a grid of about 140 cards, one per compound, each with an icon, a name, a category, a little dose pill, and a two-line description clipped with Tailwind's `line-clamp-2`. Nothing exotic. A plain CSS grid, single column on mobile, `gap: 0.5rem` between rows.
+[Telos](/projects) has a compound library page: a grid of about 140 cards, one per compound, each with an icon, a name, a category, a little dose pill, and a two-line description clipped with Tailwind's `line-clamp-2`. There's nothing exotic going on here. It's a plain CSS grid, single column on mobile, `gap: 0.5rem` between rows, the kind of layout you build without thinking twice about it.
 
-I opened it on my phone one day and some of the cards had this big, ugly gap underneath them. Not all of them. Just some. Scroll past three normal cards, hit one with a gap that looked like a whole extra card's worth of empty space, then back to normal.
+Except some of the cards had this gap underneath them that didn't belong. Not all of them, just some, scattered through the list with no obvious pattern. Scroll past three completely normal cards, hit one with a gap the size of a missing card, then back to normal like nothing happened.
 
-I reloaded. Same cards, same gaps, every time. I opened the same page in Chrome on my laptop, at the same width, forced into the same single-column layout. Perfectly uniform. Not one gap anywhere.
+<figure class="phantom-fig">
+  <svg viewBox="0 0 680 230" role="img" aria-label="Side by side comparison: a grid of four cards with perfectly even 8 pixel gaps between all of them on the left, labeled what I expected, versus a grid on the right labeled what Safari showed me, where one card sits inside a dashed box much taller than the card itself, leaving a large unexplained gap below it.">
+    <text x="10" y="24" class="phantom-fig-label" fill="var(--text-secondary)">what I expected</text>
+    <rect x="10" y="36" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <rect x="10" y="78" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <rect x="10" y="120" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <rect x="10" y="162" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <line x1="335" y1="10" x2="335" y2="220" stroke="var(--border)" stroke-width="1"></line>
+    <text x="360" y="24" class="phantom-fig-label" fill="var(--accent-orange)">what Safari showed me</text>
+    <rect x="360" y="36" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <rect x="360" y="78" width="290" height="74" rx="5" fill="none" stroke="var(--accent-orange)" stroke-width="1.5" stroke-dasharray="3 3"></rect>
+    <rect x="360" y="78" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <rect x="360" y="150" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <rect x="360" y="192" width="290" height="34" rx="5" fill="none" stroke="var(--text-primary)" stroke-width="1.3"></rect>
+    <text x="505" y="128" text-anchor="middle" class="phantom-fig-note" fill="var(--accent-orange)">empty, unexplained</text>
+  </svg>
+  <figcaption>Same markup, same CSS, two different browsers. Chrome rendered the left side, every time. My phone rendered the right side, every time, on the same three or four cards, no matter how many times I reloaded.</figcaption>
+</figure>
 
-So it was Safari-only, and it was consistent, which made it feel solvable. It was not, immediately, solvable.
+I reloaded a dozen times just to be sure. Same cards, same size gaps, every single time, which was almost more frustrating than if it had been random. Then I opened the same page in Chrome, forced it into the exact same single-column width, and got nothing. Perfectly even spacing, top to bottom, not one gap anywhere.
+
+Safari-only and completely consistent. That combination should have made it easy. It did not.
 
 ## Everything I tried that didn't work
 
-**First guess: it's the long descriptions.** The cards with the worst gaps had noticeably longer description text than their neighbors. Made sense at the time, right? I'd already capped the description at `min-h-10` (a height floor) to keep card heights consistent across a row. My theory was that a *floor* still makes the browser measure the actual content to see if it's taller, and that measurement was somehow leaking into the gap. So I swapped it for a hard `h-10` instead.
+Here's the shape of the next several hours, before I get into it properly:
 
-Shipped it, waited for the deploy, reloaded on my phone. Same gaps, same cards, pixel for pixel.
+<figure class="phantom-fig">
+  <svg viewBox="0 0 700 100" role="img" aria-label="A timeline of six things tried in order: raise the clamp height, move the animation, remove the animation entirely, and try CSS containment, all marked as failures in orange, replace line clamp marked as a partial fix in blue, and finally pin the row height marked as the real fix in green.">
+    <line x1="50" y1="40" x2="650" y2="40" stroke="var(--border)" stroke-width="1.5"></line>
+    <circle cx="50" cy="40" r="16" fill="var(--accent-orange-soft)" stroke="var(--accent-orange)" stroke-width="1.6"></circle>
+    <text x="50" y="45" text-anchor="middle" class="phantom-fig-bar-label" fill="var(--accent-orange)">1</text>
+    <circle cx="170" cy="40" r="16" fill="var(--accent-orange-soft)" stroke="var(--accent-orange)" stroke-width="1.6"></circle>
+    <text x="170" y="45" text-anchor="middle" class="phantom-fig-bar-label" fill="var(--accent-orange)">2</text>
+    <circle cx="290" cy="40" r="16" fill="var(--accent-orange-soft)" stroke="var(--accent-orange)" stroke-width="1.6"></circle>
+    <text x="290" y="45" text-anchor="middle" class="phantom-fig-bar-label" fill="var(--accent-orange)">3</text>
+    <circle cx="410" cy="40" r="16" fill="var(--accent-blue-soft)" stroke="var(--accent-blue)" stroke-width="1.6"></circle>
+    <text x="410" y="45" text-anchor="middle" class="phantom-fig-bar-label" fill="var(--accent-blue)">4</text>
+    <circle cx="530" cy="40" r="16" fill="var(--accent-orange-soft)" stroke="var(--accent-orange)" stroke-width="1.6"></circle>
+    <text x="530" y="45" text-anchor="middle" class="phantom-fig-bar-label" fill="var(--accent-orange)">5</text>
+    <circle cx="650" cy="40" r="19" fill="var(--accent-emerald-soft)" stroke="var(--accent-emerald)" stroke-width="2"></circle>
+    <text x="650" y="46" text-anchor="middle" class="phantom-fig-bar-label" fill="var(--accent-emerald)">6</text>
+    <text x="650" y="78" text-anchor="middle" class="phantom-fig-note" fill="var(--accent-emerald)">the fix</text>
+  </svg>
+  <figcaption>1: raise the clamp height. 2: move the entrance animation off the grid item. 3: remove the animation entirely. 4: replace line-clamp outright, orange everywhere except this one, which actually mattered, just not enough by itself. 5: try CSS containment. 6: stop letting Safari measure the row at all. That's the one that worked.</figcaption>
+</figure>
 
-**Second guess: it's the entrance animation.** Every card faded in with a small `framer-motion` transform on mount. I'd read that WebKit has a rough history with CSS grid and elements that carry a `transform`, specifically that a transformed grid item can throw off how a row's height gets calculated, even though `transform` isn't supposed to affect layout at all. So I moved the animation one level deeper, off the actual grid item and onto a plain wrapper's child instead.
+**First guess: it's the long descriptions.** The worst gaps sat under cards with noticeably longer text than their neighbors, and that felt like enough of a pattern to chase. I'd already capped the description at `min-h-10`, a height floor, to keep card heights consistent across a row, so my theory was that a floor still forces the browser to measure the real content to check whether it's taller, and that measurement was somehow leaking out into the gap below. I swapped it for a hard `h-10` instead, shipped it, waited for the deploy, reloaded on my phone with actual hope that I was done.
 
-Still broken. Exact same cards.
+Same gaps. Same cards. Pixel for pixel, nothing had changed.
 
-**Third guess: fine, kill the animation entirely.** If moving it wasn't enough, maybe no version of it was safe. I ripped `framer-motion` out of the shared list component completely. Zero transforms anywhere in that grid.
+**Second guess: it's the entrance animation.** Every card faded in with a small `framer-motion` transform on mount, and I'd read that WebKit has a rough history with CSS grid items that carry a `transform`, specifically that a transformed grid item can throw off how a row's height gets calculated, even though `transform` isn't supposed to touch layout at all. So I moved the animation one level deeper, off the actual grid item and onto a plain wrapper's child, which felt like a genuinely clever fix at the time.
 
-Still broken. At this point I'd eliminated three separate, individually reasonable theories, and the bug hadn't budged an inch. That's usually the moment you realize you've been debugging the wrong layer entirely.
+Still broken. Exact same cards, exact same size.
+
+**Third guess, and I was getting a little annoyed by now: fine, kill the animation entirely.** If moving it one level in wasn't enough, maybe no version of it was safe, so I ripped `framer-motion` out of the shared list component completely. Zero transforms, anywhere, in that whole grid.
+
+Still broken. Three separate, individually reasonable theories, each one shipped and verified live, and the bug hadn't moved an inch. That's usually the point where you realize you've been debugging the wrong layer of the problem entirely, and I was pretty sure that's where I was, I just didn't know which layer yet.
 
 ## Actually getting real data
 
-I was guessing at what Safari was doing instead of just asking it. So I plugged my phone into my Mac, opened Safari's remote inspector (Develop menu, pick the device, pick the tab), and ran a one-line script in the Console against the actual live page:
+I was guessing at what Safari was doing instead of just asking it, which in hindsight is an embarrassing amount of time to spend not asking the one machine that actually knew the answer. So I plugged my phone into my Mac, opened Safari's remote inspector (Develop menu, pick the device, pick the tab), and ran a one-line script in the Console against the live page:
 
 ```js
 const grid = [...document.querySelectorAll('div')]
@@ -47,38 +90,25 @@ const grid = [...document.querySelectorAll('div')]
 }));
 ```
 
-This is the thing I should have done an hour in, not five fixes deep. It gave me actual numbers, from the actual device, instead of a screenshot I was squinting at.
+This is what I should have done an hour in, not three fixes deep. It handed me real numbers straight from the device, instead of another screenshot I was squinting at on my laptop trying to eyeball pixel counts.
 
-The gap between every single card was a clean, uniform 8px. Every time. The row spacing had never been broken. What was different was each card's own *height*: 123px, 124px, then some cards at 143, 162, 181, even 200. And the step size between those was suspiciously close to one extra line of text at that font size. It tracked almost exactly with how long each card's description was.
+The gap between every single card, it turned out, was a clean uniform 8px, everywhere, with no exceptions. The row spacing had never actually been the problem. What varied was each card's own height: 123px here, 124px there, then a scattering of cards sitting at 143, 162, 181, even 200. And the size of each jump lined up almost exactly with one extra line of text at that font size, which tracked suspiciously well with how long each card's description happened to be.
 
-Which sent me right back to `line-clamp-2`, the thing I'd already "fixed" in guess #1.
+Which sent me right back to `line-clamp-2`. The thing I'd already "fixed" in guess number one.
 
 ## What was actually going on
 
-Turns out there were two bugs, not one, stacked on top of each other.
+Turns out there were two separate bugs stacked on top of each other, and I'd only been fixing at the seam between them.
 
-**Bug one:** Tailwind's `line-clamp-2` compiles down to the old WebKit hack, `display: -webkit-box` with `-webkit-line-clamp`. On my phone's build of Safari, pairing that with an explicit height didn't reliably cap anything. Longer text just kept growing the box, proportional to how much text there was, height property or not. So I ripped out `line-clamp` everywhere in the app and replaced it with a plain fixed height plus `overflow: hidden`. No ellipsis at the cut-off point, but it's unambiguous. Every browser respects a fixed height and overflow, no legacy box model involved.
+**Bug one:** Tailwind's `line-clamp-2` compiles down to an old WebKit hack, `display: -webkit-box` paired with `-webkit-line-clamp`. On my phone's build of Safari, combining that with an explicit height didn't reliably cap anything at all. Longer text just kept growing the box, proportional to how much text there was, height property or not. So I ripped `line-clamp` out everywhere in the app and replaced it with a plain fixed height plus `overflow: hidden`. You lose the ellipsis at the cut-off point, but it's unambiguous: every browser respects a fixed height and an overflow rule, no legacy box model involved anywhere.
 
-I measured the actual `<button>` for the card directly after that change: 123px, exactly right. Good.
+I measured the actual `<button>` for the card right after shipping that change, and it came back at 123px. Exactly right. For about ten minutes I thought I was finally done.
 
-Except the *grid item wrapping it* was still 162px.
+Then I checked the grid item wrapping it, and it was still 162px.
 
-**Bug two,** and the one that actually explains the title of this post: even with the description correctly clipped to 40px on screen, its natural, un-clipped content still wanted 95px (`scrollHeight` told me that much). And whatever Safari's grid engine uses to decide how tall an `auto` row should be seems to be looking at that unclipped 95px number, not the 40px that's actually painted. The card renders exactly right. The invisible box the grid allocated around it doesn't match, and the leftover space just sits there, silently, below the card, looking exactly like a layout bug even though every element inside it is behaving.
+**Bug two,** and this is the one that actually explains the number in the title: even with the description correctly clipped to 40px on screen, its natural, un-clipped content still wanted 95px of space, which `scrollHeight` was happy to confirm. Whatever Safari's grid engine uses to decide how tall an `auto` row should be seemed to be looking at that unclipped 95px figure, not the 40px that was actually painted on screen. The card itself rendered exactly right. The invisible box the grid built around it didn't match, and the leftover space just sat there quietly below the card, looking exactly like a layout bug even though every single element inside it was behaving perfectly.
 
-I tried one more targeted fix before giving up on being clever about it: CSS containment (`contain: layout paint`) on the grid item, which is supposed to stop a descendant's content from being able to influence how an ancestor gets measured. Reasonable idea, and it's a pattern the app already used elsewhere. Didn't work either. Confirmed with a fresh, timestamped console check to rule out me just looking at a stale cached build for the fifth time.
-
-## The actual fix
-
-At that point every card's real height was fully deterministic. Fixed-size icon, single-line truncated name and category, and now a hard-clipped description. There was no reason for the row height to be `auto` in the first place, since nothing in it could legitimately vary.
-
-So instead of trying to convince Safari to measure things correctly, I just took the measurement away from it entirely:
-
-```diff
-- grid gap-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3
-+ grid gap-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[128px]
-```
-
-Pin the row track to a fixed pixel value, and there's no `auto` sizing pass left for the bug to hide in. Reloaded, ran the same console check, and this time the grid item and the button matched. 123 and 123.
+I had one more idea before I let myself accept how strange this was. CSS containment, `contain: layout paint`, on the grid item, which is supposed to stop a descendant's content from being able to influence how an ancestor gets measured. It's a reasonable technique, and one the app already used elsewhere for exactly this kind of isolation. I shipped it, confirmed with a fresh, timestamped console check that I wasn't just staring at a stale cached build for the fifth time, and it changed nothing.
 
 <figure class="phantom-fig">
   <svg viewBox="0 0 640 260" role="img" aria-label="Diagram of a nested box: a grid item that Safari measured at 162 pixels, containing a card that correctly renders at 123 pixels, containing a description paragraph clipped on screen to 40 pixels but with 95 pixels of unclipped content sitting underneath it. The gap between the grid item's boundary and the card's actual bottom edge is the phantom 39 pixels that showed up as a visual gap.">
@@ -97,6 +127,19 @@ Pin the row track to a fixed pixel value, and there's no `auto` sizing pass left
   </svg>
   <figcaption>The card and the text inside it both render at the right size. The extra space sits between the button's real bottom edge and wherever Safari decided the row needed to end, and it appears to be sizing that boundary off the unclipped content, not the clipped one.</figcaption>
 </figure>
+
+## The actual fix
+
+By this point every card's real height was fully deterministic. Fixed-size icon, single-line truncated name and category, and now a properly hard-clipped description. There was no legitimate reason left for the row height to be `auto` at all, since nothing inside the card could actually vary anymore.
+
+So instead of trying, yet again, to convince Safari to measure things correctly, I just took the measurement away from it entirely:
+
+```diff
+- grid gap-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3
++ grid gap-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 auto-rows-[128px]
+```
+
+Pin the row track to a fixed pixel value and there's no `auto` sizing pass left for the bug to hide inside. I reloaded, ran the same console check one more time, and this time the grid item and the button finally matched: 123 and 123.
 
 <figure class="phantom-fig">
   <svg viewBox="0 0 720 190" role="img" aria-label="Bar chart of five real card heights measured on the device: 124, 143, 162, 181, and 200 pixels, climbing in steps of about 19 pixels, roughly one text line each, tracking with each card's description length.">
@@ -165,10 +208,10 @@ Pin the row track to a fixed pixel value, and there's no `auto` sizing pass left
 
 ## What I took away from this
 
-A browser that just quietly refuses to reproduce your bug isn't a coincidence you can wave off, it's information. I burned three fixes assuming Chrome working meant my code was fine and the problem had to be somewhere I hadn't looked yet on the Safari side specifically, which was true, just not in the place I kept guessing.
+A browser that just quietly refuses to reproduce your bug isn't a coincidence you get to wave off. It's information. I burned three separate fixes assuming that Chrome working meant my code had to be fine, and the problem had to be somewhere I just hadn't looked yet on the Safari side. That part was true. I just kept guessing at the wrong place to look.
 
-Also: measure the thing the bug is actually in, not the thing that's easiest to check. I checked the card's visible content three separate times and it was correct every single time. The bug was one level up, in a box with no border, no background, and nothing rendered inside it to give it away.
+There's a second lesson buried in there too: measure the thing the bug is actually in, not the thing that's easiest to check. I checked the card's visible content three separate times, and it was correct every single time, which is exactly why it took so long. The real bug was one level up, sitting inside a box with no border, no background, and nothing rendered inside it to give away that it even existed.
 
-And `-webkit-line-clamp` is apparently just not safe to pair with an explicit height on some versions of Safari. If you're clamping text inside anything remotely complex, a plain fixed height with `overflow: hidden` is more boring but it will not lie to you.
+And, more narrowly, `-webkit-line-clamp` is apparently just not safe to pair with an explicit height on some builds of Safari. If you're clamping text inside anything remotely complex, a plain fixed height with `overflow: hidden` is more boring to look at, but it will not quietly lie to you six months later at midnight.
 
-Anyway, the grid is fixed now, and I have a new appreciation for Safari's remote inspector, which I'd genuinely never opened before this week.
+Anyway. The grid is fixed now, the app looks the same on every device I own, and I have a genuinely new appreciation for Safari's remote inspector, which I'd never once opened before this week and will absolutely be reaching for again.
