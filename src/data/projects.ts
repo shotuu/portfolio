@@ -30,6 +30,13 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    title: 'Meadow',
+    description: 'A personal finance app that answers where the money actually goes. Syncs transactions automatically from US/EU banks via Plaid, Singapore banks via Finverse, and brokerage holdings via IBKR Flex Query, then categorizes them with rule-based matching that learns from corrections plus a Gemini AI fallback. Three budgeting modes (monthly reset, rollover envelopes, sinking funds) run on one shared engine, with net worth, recurring-charge detection, and a real installable PWA.',
+    tags: ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL', 'Plaid', 'Tailwind CSS', 'PWA'],
+    github: 'https://github.com/shotuu/meadow',
+    featured: true,
+  },
+  {
     title: 'Whales Chat',
     description: 'A real-time chat platform built with Flask and Socket.IO. Features user authentication, persistent message history in SQLite, an admin dashboard, and CSV export of chat logs.',
     tags: ['Python', 'Flask', 'Socket.IO', 'SQLite'],
