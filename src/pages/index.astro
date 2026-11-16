@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { projects } from '../data/projects';
 
-// Featured projects for carousel
 const featuredProjects = projects.filter(p => p.featured);
 
 // Recent blog posts (latest 3)
@@ -11,229 +10,133 @@ const allPosts = Object.values(postModules) as any[];
 const recentPosts = allPosts
   .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
   .slice(0, 3);
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const skills: { label: string; items: string[] }[] = [
+  { label: 'Languages', items: ['Python', 'C++', 'JavaScript', 'Swift', 'SQL'] },
+  { label: 'Security', items: ['Pen testing', 'Cryptography', 'Wireshark', 'nmap', 'ICS/OT'] },
+  { label: 'Frameworks', items: ['React', 'Node.js', 'Flask', 'FastAPI', 'SwiftUI'] },
+  { label: 'Tools', items: ['Linux', 'Git', 'Docker', 'Bash'] },
+  { label: 'Data & ML', items: ['TensorFlow', 'OpenCV', 'pandas', 'scikit-learn'] },
+];
 ---
 
 <BaseLayout title="Home">
-  <!-- Hero Section -->
   <section class="hero section">
-    <div class="container container--wide">
-      <div class="hero-intro">
-        <div class="hero-top">
-          <div class="hero-text">
-            <span class="hero-greeting">Hi, I'm</span>
-            <h1 class="hero-name">Daniel Wu<span class="hero-dot">.</span></h1>
-            <p class="hero-tagline">
-              CS student at UCLA. I build things, break things,
-              and write about stuff. I dabble with music sometimes.
-            </p>
-          </div>
-          <div class="hero-photo">
-            <img src="/daniel_wu.jpg" alt="Daniel Wu" class="hero-photo__img" />
-          </div>
-        </div>
-        <div class="hero-cta">
-          <a href="/projects" class="btn btn--primary">View Projects</a>
-          <a href="/contact" class="btn">Get in Touch</a>
+    <div class="container">
+      <div class="hero-top">
+        <img src="/daniel_wu.jpg" alt="Daniel Wu" class="hero-photo" width="88" height="88" />
+        <div>
+          <h1 class="hero-name">Daniel Wu</h1>
+          <p class="hero-role">CS @ UCLA, from Singapore</p>
         </div>
       </div>
-
-      <div class="hero-terminal">
-        <div class="terminal">
-          <div class="terminal-header">
-            <span class="terminal-dot terminal-dot--red"></span>
-            <span class="terminal-dot terminal-dot--yellow"></span>
-            <span class="terminal-dot terminal-dot--green"></span>
-            <span class="terminal-title">~/.portfolio</span>
-          </div>
-          <div class="terminal-body" id="terminal-body">
-            <div class="terminal-line">
-              <span class="terminal-prompt">$</span>
-              <span class="terminal-text" id="terminal-text"></span>
-              <span class="terminal-cursor">|</span>
-            </div>
-          </div>
-        </div>
+      <p class="hero-tagline">
+        I build things, break things, and write about the bugs that cost me a weekend.
+        I dabble with music sometimes.
+      </p>
+      <div class="hero-cta">
+        <a href="/projects" class="btn btn--primary">See my projects</a>
+        <a href="/resume" class="btn">Read my resume</a>
       </div>
     </div>
   </section>
 
-  <!-- About Section -->
-  <section class="about section section--tight">
+  <section class="section">
     <div class="container">
-      <h2 class="section-heading">About Me</h2>
+      <h2 class="section-heading">About</h2>
       <div class="about-content">
         <p>
-          I'm a freshman studying Computer Science at UCLA with a passion for
-          cybersecurity and building software that matters. When I'm not in class,
-          you'll find me working on side projects, digging into security research,
-          or making music.
+          I'm a sophomore studying computer science at UCLA. Before college I spent a year and a
+          half as a cyber threat intelligence analyst with Singapore's Digital &amp; Intelligence
+          Service, which is most of the reason I care about security. Since getting here I've
+          helped run the infrastructure for LA CTF and started interning at Scalence Labs.
         </p>
         <p>
-          I believe in learning by doing, and every project is an opportunity to
-          explore new technologies and push my boundaries. This site is a living
-          portfolio of that journey.
+          The rest of my time goes into side projects, most of which are on this site. There's
+          also a cat in the corner. If you poke around enough you can buy it a hat.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- Featured Projects Carousel -->
   {featuredProjects.length > 0 && (
-    <section class="featured section section--tight">
+    <section class="section">
       <div class="container">
-        <div class="featured-header">
-          <h2 class="section-heading">Featured Projects</h2>
-          <a href="/projects" class="featured-all">All projects &rarr;</a>
+        <div class="section-header">
+          <h2 class="section-heading">Projects</h2>
+          <a href="/projects" class="section-more">All projects &rarr;</a>
         </div>
-        <div class="carousel">
-          <button class="carousel-arrow carousel-arrow--prev" id="carousel-prev" aria-label="Previous">&larr;</button>
-          <div class="carousel-viewport">
-            <div class="carousel-track" id="carousel-track">
-            {featuredProjects.map(project => (
-              <div class="carousel-slide">
-                <div class="card project-card project-card--featured">
-                  <div class="project-card__header">
-                    <h3 class="card__title">{project.title}</h3>
-                    <span class="badge badge--accent">Featured</span>
-                  </div>
-                  <p class="card__description">{project.description}</p>
-                  <div class="card__tags">
-                    {project.tags.map(tag => <span class="badge">{tag}</span>)}
-                  </div>
-                  <div class="project-card__links">
-                    {project.github && (
-                      <a href={project.github} class="project-link" target="_blank" rel="noopener">
-                        GitHub &nearr;
-                      </a>
-                    )}
-                    {project.link && project.link !== '#' && (
-                      <a href={project.link} class="project-link" target="_blank" rel="noopener">
-                        Live Demo &nearr;
-                      </a>
-                    )}
-                  </div>
+        <ul class="row-list">
+          {featuredProjects.map(project => (
+            <li class="row">
+              <div class="row__head">
+                <h3 class="row__title">{project.title}</h3>
+                <div class="row__links">
+                  {project.link && project.link !== '#' && (
+                    <a href={project.link} target="_blank" rel="noopener">Site &nearr;</a>
+                  )}
+                  {project.github && (
+                    <a href={project.github} target="_blank" rel="noopener">Code &nearr;</a>
+                  )}
                 </div>
               </div>
-            ))}
-            </div>
-          </div>
-          <button class="carousel-arrow carousel-arrow--next" id="carousel-next" aria-label="Next">&rarr;</button>
-        </div>
-        <div class="carousel-dots" id="carousel-dots">
-          {featuredProjects.map((_, i) => (
-            <button class="carousel-dot" data-index={i} aria-label={`Go to slide ${i + 1}`}></button>
+              <p class="row__desc">{project.summary ?? project.description}</p>
+              <p class="row__meta">{project.tags.slice(0, 5).join(' · ')}</p>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   )}
 
-  <!-- Recent Posts Preview -->
-  <section class="recent section">
+  <section class="section">
     <div class="container">
-      <div class="recent-header">
-        <h2 class="section-heading">Recent Writing</h2>
-        <a href="/blog" class="featured-all">View all &rarr;</a>
+      <div class="section-header">
+        <h2 class="section-heading">Writing</h2>
+        <a href="/blog" class="section-more">All posts &rarr;</a>
       </div>
-      <p class="recent-sub">Blog posts, writeups, and things I've learned along the way.</p>
 
       {recentPosts.length > 0 ? (
-        <div class="recent-posts">
+        <ul class="row-list">
           {recentPosts.map(post => (
-            <a href={`/blog/${post.frontmatter.slug}`} class="post-item card">
-              <div class="post-item__meta">
-                <time datetime={post.frontmatter.date}>
-                  {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  })}
-                </time>
-              </div>
-              <h3 class="post-item__title">{post.frontmatter.title}</h3>
-              {post.frontmatter.description && (
-                <p class="post-item__desc">{post.frontmatter.description}</p>
-              )}
-              {post.frontmatter.tags && (
-                <div class="card__tags">
-                  {post.frontmatter.tags.slice(0, 3).map((tag: string) => (
-                    <span class="badge">{tag}</span>
-                  ))}
-                </div>
-              )}
-            </a>
+            <li class="row">
+              <a href={`/blog/${post.frontmatter.slug}`} class="row__link">
+                <time class="row__date" datetime={post.frontmatter.date}>{formatDate(post.frontmatter.date)}</time>
+                <h3 class="row__title">{post.frontmatter.title}</h3>
+                {post.frontmatter.description && (
+                  <p class="row__desc">{post.frontmatter.description}</p>
+                )}
+              </a>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <p class="recent-empty">No posts yet. Check back soon!</p>
+        <p class="empty">Nothing here yet.</p>
       )}
     </div>
   </section>
 
-  <!-- Skills Section -->
-  <section class="skills section">
+  <section class="section">
     <div class="container">
-      <h2 class="section-heading">What I Work With</h2>
-      <div class="skills-grid">
-        <div class="skill-group">
-          <h4 class="skill-group__title">Languages</h4>
-          <div class="skill-tags">
-            <span class="badge badge--accent">Python</span>
-            <span class="badge badge--accent">C++</span>
-            <span class="badge badge--accent">JavaScript</span>
-            <span class="badge badge--accent">Swift</span>
-            <span class="badge badge--accent">SQL</span>
+      <h2 class="section-heading">Tools I use</h2>
+      <dl class="skills">
+        {skills.map(group => (
+          <div class="skills__row">
+            <dt>{group.label}</dt>
+            <dd>{group.items.join(', ')}</dd>
           </div>
-        </div>
-        <div class="skill-group">
-          <h4 class="skill-group__title">Security</h4>
-          <div class="skill-tags">
-            <span class="badge badge--orange">Pen Testing</span>
-            <span class="badge badge--orange">Cryptography</span>
-            <span class="badge badge--orange">Wireshark</span>
-            <span class="badge badge--orange">nmap</span>
-            <span class="badge badge--orange">ICS/OT</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <h4 class="skill-group__title">Frameworks</h4>
-          <div class="skill-tags">
-            <span class="badge badge--emerald">React</span>
-            <span class="badge badge--emerald">Node.js</span>
-            <span class="badge badge--emerald">Flask</span>
-            <span class="badge badge--emerald">FastAPI</span>
-            <span class="badge badge--emerald">SwiftUI</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <h4 class="skill-group__title">Tools & Infra</h4>
-          <div class="skill-tags">
-            <span class="badge badge--emerald">Linux</span>
-            <span class="badge badge--emerald">Git</span>
-            <span class="badge badge--emerald">Docker</span>
-            <span class="badge badge--emerald">Bash</span>
-          </div>
-        </div>
-        <div class="skill-group">
-          <h4 class="skill-group__title">Data & ML</h4>
-          <div class="skill-tags">
-            <span class="badge badge--violet">TensorFlow</span>
-            <span class="badge badge--violet">OpenCV</span>
-            <span class="badge badge--violet">pandas</span>
-            <span class="badge badge--violet">scikit-learn</span>
-          </div>
-        </div>
-      </div>
+        ))}
+      </dl>
     </div>
   </section>
 
-  <!-- Music Player Widget -->
-  <section class="music section">
+  <section class="section">
     <div class="container">
-      <h2 class="section-heading">In the Studio</h2>
-      <p class="music-sub">
-        A few tracks I've been working on lately.
-      </p>
+      <h2 class="section-heading">Music</h2>
+      <p class="music-sub">Stuff I've been making on the side, as SYR3N.</p>
       <div class="music-card">
         <iframe
           title="SYR3N on Spotify"
@@ -249,366 +152,94 @@ const recentPosts = allPosts
     </div>
   </section>
 
-  <!-- Contact CTA -->
-  <section class="cta section">
+  <section class="section">
     <div class="container">
-      <div class="cta-card">
-        <h2 class="cta-title">
-          Let's <span class="cta-title__accent">build something</span>.
-        </h2>
-        <p class="cta-text">
-          Got a project idea, an internship opportunity, or just want to say hi?
-          I reply to every message — usually within a day.
+      <div class="contact-line">
+        <h2 class="section-heading">Say hi</h2>
+        <p>
+          Email is the best way to reach me:
+          <a href="mailto:wuscdaniel@ucla.edu">wuscdaniel@ucla.edu</a>. I'm also on
+          <a href="https://github.com/shotuu" target="_blank" rel="noopener">GitHub</a> and
+          <a href="https://linkedin.com/in/wuscdaniel" target="_blank" rel="noopener">LinkedIn</a>.
         </p>
-        <div class="cta-buttons">
-          <a href="/contact" class="btn btn--primary cta-btn-primary">
-            Get in Touch
-            <span class="cta-arrow">&rarr;</span>
-          </a>
-          <a href="/resume" class="btn">View Resume</a>
-        </div>
       </div>
     </div>
   </section>
 </BaseLayout>
 
-<script>
-  // Terminal typing effect
-  const commands = [
-    { text: 'whoami', delay: 80 },
-    { text: 'cat interests.txt', delay: 60 },
-    { text: 'ls projects/', delay: 70 },
-    { text: 'echo "Welcome to my website!"', delay: 50 },
-  ];
-
-  const responses: Record<string, string> = {
-    'whoami': 'daniel_wu @ UCLA',
-    'cat interests.txt': 'cybersecurity, web dev, machine learning, music production',
-    'ls projects/': 'coming_soon/  in_progress/  completed/',
-    'echo "Welcome to my website!"': 'Welcome to my website!',
-  };
-
-  const terminalBody = document.getElementById('terminal-body');
-  let activeText: Element | null = document.getElementById('terminal-text');
-
-  async function typeCommand(cmd: typeof commands[0]) {
-    if (!activeText) return;
-
-    for (let i = 0; i < cmd.text.length; i++) {
-      activeText.textContent = cmd.text.slice(0, i + 1);
-      await new Promise(r => setTimeout(r, cmd.delay + Math.random() * 40));
-    }
-
-    await new Promise(r => setTimeout(r, 400));
-
-    if (terminalBody) {
-      const cursor = terminalBody.querySelector('.terminal-cursor');
-      cursor?.remove();
-
-      const responseLine = document.createElement('div');
-      responseLine.className = 'terminal-line terminal-response';
-      responseLine.textContent = responses[cmd.text] || '';
-      terminalBody.appendChild(responseLine);
-
-      await new Promise(r => setTimeout(r, 600));
-    }
-  }
-
-  async function runTerminal() {
-    while (true) {
-      // Reset terminal to initial state
-      if (terminalBody) {
-        terminalBody.innerHTML = `<div class="terminal-line"><span class="terminal-prompt">$</span><span class="terminal-text"></span><span class="terminal-cursor">|</span></div>`;
-        activeText = terminalBody.querySelector('.terminal-text');
-      }
-
-      for (const cmd of commands) {
-        await typeCommand(cmd);
-
-        if (terminalBody) {
-          const newLine = document.createElement('div');
-          newLine.className = 'terminal-line';
-          newLine.innerHTML = `<span class="terminal-prompt">$</span><span class="terminal-text"></span><span class="terminal-cursor">|</span>`;
-          terminalBody.appendChild(newLine);
-          terminalBody.scrollTop = terminalBody.scrollHeight;
-
-          activeText = newLine.querySelector('.terminal-text');
-        }
-
-        await new Promise(r => setTimeout(r, 800));
-      }
-
-      // Pause before restarting
-      await new Promise(r => setTimeout(r, 3000));
-    }
-  }
-
-  // Use intersection observer to start animation when visible
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        runTerminal();
-        observer.disconnect();
-      }
-    });
-  });
-
-  if (terminalBody) observer.observe(terminalBody);
-
-  // Featured Projects Carousel
-  const track = document.getElementById('carousel-track');
-  const prevBtn = document.getElementById('carousel-prev');
-  const nextBtn = document.getElementById('carousel-next');
-  const dotsContainer = document.getElementById('carousel-dots');
-  const slides = track ? Array.from(track.querySelectorAll('.carousel-slide')) : [];
-  let currentSlide = 0;
-
-  function updateCarousel() {
-    if (!track) return;
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
-    if (dotsContainer) {
-      dotsContainer.querySelectorAll('.carousel-dot').forEach((dot, i) => {
-        dot.classList.toggle('active', i === currentSlide);
-      });
-    }
-  }
-
-  function goTo(i: number) {
-    if (slides.length === 0) return;
-    currentSlide = (i + slides.length) % slides.length;
-    updateCarousel();
-  }
-
-  prevBtn?.addEventListener('click', () => goTo(currentSlide - 1));
-  nextBtn?.addEventListener('click', () => goTo(currentSlide + 1));
-  dotsContainer?.querySelectorAll('.carousel-dot').forEach((dot, i) => {
-    dot.addEventListener('click', () => goTo(i));
-  });
-
-  // Auto-advance carousel
-  if (slides.length > 1) {
-    updateCarousel();
-    setInterval(() => goTo(currentSlide + 1), 6000);
-  }
-</script>
-
 <style>
-  /* Compact spacing for stacked About / Featured sections */
-  .section--tight {
-    padding-top: var(--space-xl);
-    padding-bottom: var(--space-xl);
-  }
-
-  .section + .section--tight {
-    padding-top: 0;
-  }
-
-  .section--tight .section-heading {
-    margin-bottom: var(--space-md);
-  }
-
   /* Hero */
-  .hero .container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-3xl);
-    align-items: center;
+  .hero {
+    padding-top: var(--space-3xl);
   }
 
   .hero-top {
     display: flex;
     align-items: center;
-    gap: var(--space-2xl);
-    margin-bottom: var(--space-xl);
-  }
-
-  .hero-text {
-    flex: 1;
-    position: relative;
-    isolation: isolate;
-  }
-
-  .hero-text::before {
-    content: '';
-    position: absolute;
-    left: 42%;
-    top: 48%;
-    width: min(520px, 120%);
-    aspect-ratio: 1.35;
-    background:
-      radial-gradient(ellipse at 44% 42%, rgba(37, 99, 235, 0.28), transparent 58%),
-      radial-gradient(ellipse at 62% 56%, rgba(124, 58, 237, 0.18), transparent 60%),
-      radial-gradient(ellipse at 34% 68%, rgba(16, 185, 129, 0.12), transparent 58%);
-    filter: blur(34px);
-    opacity: 0.78;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: -1;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
   }
 
   .hero-photo {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    object-fit: cover;
     flex-shrink: 0;
   }
 
-  .hero-photo__placeholder {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: var(--bg-secondary);
-    border: 3px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+  .hero-name {
+    margin-bottom: var(--space-xs);
   }
 
-  .hero-photo__initials {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    font-weight: 700;
+  .hero-role {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
     color: var(--text-tertiary);
   }
 
-  .hero-photo__img {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--border);
-  }
-
-  .hero-greeting {
-    font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    color: var(--accent-blue);
-    display: block;
-    margin-bottom: var(--space-sm);
-    text-shadow: 0 0 14px var(--accent-blue-glow);
-  }
-
-  .hero-name {
-    margin-bottom: var(--space-md);
-    text-shadow:
-      0 0 18px var(--accent-blue-glow),
-      0 0 38px var(--accent-violet-glow);
-  }
-
-  .hero-dot {
-    color: var(--accent-blue);
-  }
-
   .hero-tagline {
-    font-size: 1.125rem;
-    max-width: 40ch;
-  }
-
-  .hero-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    max-width: 34ch;
     margin-bottom: var(--space-xl);
   }
 
   .hero-cta {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-sm);
     flex-wrap: wrap;
   }
 
-  /* Terminal */
-  .terminal {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    box-shadow: var(--shadow-lg);
-  }
-
-  .terminal-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 14px;
-    background: var(--bg-tertiary);
-    border-bottom: 1px solid var(--border-light);
-  }
-
-  .terminal-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
-
-  .terminal-dot--red { background: #ef4444; }
-  .terminal-dot--yellow { background: #eab308; }
-  .terminal-dot--green { background: #22c55e; }
-
-  .terminal-title {
+  /* Section chrome */
+  .section-heading {
+    font-size: 1rem;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0;
     color: var(--text-tertiary);
-    margin-left: 8px;
+    margin-bottom: var(--space-lg);
   }
 
-  .terminal-body {
-    padding: 14px;
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .section-more {
     font-family: var(--font-mono);
     font-size: 0.8125rem;
-    line-height: 1.8;
-    min-height: 280px;
-    max-height: 400px;
-    overflow-y: auto;
+    color: var(--text-tertiary);
   }
 
-  .terminal-line {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .terminal-prompt {
-    color: var(--accent-emerald);
-    font-weight: 600;
-    flex-shrink: 0;
-  }
-
-  .terminal-text {
+  .section-more:hover {
     color: var(--text-primary);
   }
 
-  .terminal-cursor {
-    color: var(--accent-blue);
-    animation: cursorBlink 1s step-end infinite;
-  }
-
-  @keyframes cursorBlink {
-    50% { opacity: 0; }
-  }
-
-  :global(.terminal-response) {
-    color: var(--accent-blue) !important;
-    padding-left: 18px;
-    opacity: 0.8;
-  }
-
   /* About */
-  .section-heading {
-    margin-bottom: var(--space-xl);
-    position: relative;
-    display: inline-block;
-  }
-
-  .section-heading::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: var(--accent-blue);
-    border-radius: 2px;
-  }
-
   .about-content {
     display: flex;
     flex-direction: column;
@@ -617,340 +248,128 @@ const recentPosts = allPosts
 
   .about-content p {
     font-size: 1.0625rem;
-    line-height: 1.8;
+    line-height: 1.75;
   }
 
-  /* Skills */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: var(--space-xl);
+  /* Project + post rows */
+  .row-list {
+    list-style: none;
+    border-top: 1px solid var(--border-light);
   }
 
-  .skill-group__title {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-md);
+  .row {
+    border-bottom: 1px solid var(--border-light);
   }
 
-  .skill-tags {
+  .row:not(:has(.row__link)) {
+    padding: var(--space-lg) 0;
+  }
+
+  .row__link {
+    display: block;
+    padding: var(--space-lg) 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .row__link:hover {
+    text-decoration: none;
+  }
+
+  .row__link:hover .row__title {
+    color: var(--accent);
+  }
+
+  .row__head {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-  }
-
-  /* Featured Projects Carousel */
-  .featured-header {
-    display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: space-between;
     gap: var(--space-md);
-    flex-wrap: wrap;
-    margin-bottom: var(--space-md);
   }
 
-  .featured-all {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--text-tertiary);
+  .row__title {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
     transition: color var(--transition-fast);
   }
 
-  .featured-all:hover {
-    color: var(--accent-blue);
-  }
-
-  .carousel {
-    position: relative;
+  .row__links {
     display: flex;
-    align-items: center;
     gap: var(--space-md);
-  }
-
-  .carousel-viewport {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    border-radius: var(--radius-md);
-  }
-
-  .carousel-track {
-    display: flex;
-    transition: transform 0.5s ease;
-    will-change: transform;
-  }
-
-  .carousel-slide {
-    flex: 0 0 100%;
-    min-width: 0;
-    padding: var(--space-xs);
-  }
-
-  .carousel-arrow {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--bg-secondary);
-    color: var(--text-primary);
     font-family: var(--font-mono);
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 0.8125rem;
+    flex-shrink: 0;
   }
 
-  .carousel-arrow:hover {
-    background: var(--accent-blue);
-    color: white;
-    border-color: var(--accent-blue);
-  }
-
-  .carousel-dots {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-sm);
-    margin-top: var(--space-md);
-  }
-
-  .carousel-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: none;
-    background: var(--border);
-    padding: 0;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-  }
-
-  .carousel-dot.active {
-    background: var(--accent-blue);
-    transform: scale(1.3);
-  }
-
-  /* Recent */
-  .recent-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-md);
-    flex-wrap: wrap;
-  }
-
-  .recent-sub {
-    margin-top: var(--space-sm);
-    margin-bottom: var(--space-xl);
+  .row__desc {
     font-size: 0.9375rem;
+    margin-bottom: var(--space-xs);
   }
 
-  .recent-posts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-md);
-  }
-
-  .post-item {
-    text-decoration: none;
+  .row__date,
+  .row__meta {
     display: block;
-  }
-
-  .post-item__meta {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--text-tertiary);
-    margin-bottom: var(--space-sm);
   }
 
-  .post-item__title {
-    font-size: 1.125rem;
-    color: var(--text-primary);
-    margin-bottom: var(--space-sm);
-    transition: color var(--transition-fast);
+  .row__date {
+    margin-bottom: var(--space-xs);
   }
 
-  .post-item:hover .post-item__title {
-    color: var(--accent-blue);
-  }
-
-  .post-item__desc {
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-    margin-bottom: var(--space-md);
-    max-width: none;
-  }
-
-  .recent-empty {
+  .empty {
     color: var(--text-tertiary);
+  }
+
+  /* Skills */
+  .skills__row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: var(--space-md);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .skills__row:first-child {
+    border-top: 1px solid var(--border-light);
+  }
+
+  .skills dt {
     font-family: var(--font-mono);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    padding-top: 0.15em;
+  }
+
+  .skills dd {
+    color: var(--text-secondary);
   }
 
   /* Music */
   .music-sub {
-    margin-top: calc(-1 * var(--space-md));
-    margin-bottom: var(--space-xl);
-    font-size: 0.9375rem;
-    color: var(--text-secondary);
-  }
-
-  .music-card {
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--border-light);
-    background: var(--bg-secondary);
+    margin-bottom: var(--space-lg);
   }
 
   .music-card iframe {
     display: block;
-    border-radius: var(--radius-md);
+    border-radius: 12px;
   }
 
-  /* Contact CTA */
-  .cta-card {
-    position: relative;
-    background: var(--bg-secondary);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4xl) var(--space-2xl);
-    text-align: center;
-    overflow: hidden;
-    isolation: isolate;
-  }
-
-  /* Animated gradient border via masked pseudo-element */
-  .cta-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1.5px;
-    background: conic-gradient(
-      from var(--cta-angle, 0deg),
-      var(--accent-blue),
-      var(--accent-violet),
-      var(--accent-orange),
-      var(--accent-emerald),
-      var(--accent-blue)
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    animation: ctaSpin 8s linear infinite;
-    z-index: -1;
-  }
-
-  @property --cta-angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-  }
-
-  @keyframes ctaSpin {
-    to { --cta-angle: 360deg; }
-  }
-
-  /* Soft inner glow that radiates from the title */
-  .cta-card::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 60%;
-    aspect-ratio: 1;
-    background: radial-gradient(circle, var(--accent-blue-soft), transparent 70%);
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.6;
-  }
-
-  .cta-title {
-    font-size: clamp(1.75rem, 5vw, 2.75rem);
-    margin-bottom: var(--space-md);
-    letter-spacing: -0.03em;
-  }
-
-  .cta-title__accent {
-    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
-    -webkit-background-clip: text;
-            background-clip: text;
-    color: transparent;
-  }
-
-  .cta-text {
-    font-size: 1.0625rem;
-    color: var(--text-secondary);
-    max-width: 50ch;
-    margin: 0 auto var(--space-xl);
-  }
-
-  .cta-buttons {
-    display: flex;
-    gap: var(--space-md);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .cta-btn-primary {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.9375rem;
-  }
-
-  .cta-arrow {
-    display: inline-block;
-    transition: transform var(--transition-base);
-  }
-
-  .cta-btn-primary:hover .cta-arrow {
-    transform: translateX(4px);
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .recent-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .hero .container {
-      grid-template-columns: 1fr;
-      gap: var(--space-2xl);
-    }
-
-    .hero-terminal {
-      order: -1;
-    }
-
-    .hero-top {
-      flex-direction: column-reverse;
-      text-align: center;
-      gap: var(--space-lg);
+  @media (max-width: 480px) {
+    .hero-photo {
+      width: 64px;
+      height: 64px;
     }
 
     .hero-tagline {
-      max-width: none;
+      font-size: 1.125rem;
     }
 
-    .hero-badges {
-      justify-content: center;
-    }
-
-    .hero-cta {
-      justify-content: center;
-    }
-
-    .hero-photo__placeholder,
-    .hero-photo__img {
-      width: 100px;
-      height: 100px;
+    .skills__row {
+      grid-template-columns: 1fr;
+      gap: 0;
     }
   }
 </style>

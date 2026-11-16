@@ -13,13 +13,12 @@ const posts = allPosts
     <div class="container">
       <h1>Blog</h1>
       <p class="page-subtitle">
-        Thoughts on CS, security, and things I've learned along the way.
+        Write-ups of bugs, projects, and whatever I'm figuring out at the moment.
       </p>
 
       {posts.length === 0 ? (
         <div class="empty-state">
-          <p class="empty-state__icon">&#9998;</p>
-          <p class="empty-state__text">No posts yet. Check back soon!</p>
+          <p class="empty-state__text">Nothing here yet.</p>
         </div>
       ) : (
         <div class="posts-list">
@@ -56,134 +55,53 @@ const posts = allPosts
 <style>
   .page-subtitle {
     margin-top: var(--space-sm);
-    margin-bottom: var(--space-3xl);
+    margin-bottom: var(--space-2xl);
     font-size: 1.0625rem;
   }
 
   .posts-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    border-top: 1px solid var(--border-light);
   }
 
   .post-item {
-    --card-accent: var(--accent-blue);
-    --card-accent-soft: var(--accent-blue-soft);
-    --card-accent-glow: var(--accent-blue-glow);
-    position: relative;
-    isolation: isolate;
-    text-decoration: none;
     display: block;
-    background: var(--bg-primary);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-lg);
-    padding: var(--space-xl);
-    overflow: hidden;
-    transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
-  }
-
-  /* Spinning gradient border */
-  .post-item::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1.5px;
-    background: conic-gradient(
-      from var(--post-angle, 0deg),
-      var(--card-accent),
-      transparent 25%,
-      transparent 75%,
-      var(--card-accent)
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    opacity: 0;
-    transition: opacity var(--transition-base);
-    pointer-events: none;
-  }
-
-  /* Soft radial glow */
-  .post-item::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 50%;
-    aspect-ratio: 1;
-    background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
-    transform: translate(-20%, -50%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity var(--transition-base);
-    z-index: -1;
-  }
-
-  @property --post-angle {
-    syntax: '<angle>';
-    initial-value: 0deg;
-    inherits: false;
-  }
-
-  @keyframes postSpin {
-    to { --post-angle: 360deg; }
+    padding: var(--space-lg) 0;
+    border-bottom: 1px solid var(--border-light);
+    color: inherit;
+    text-decoration: none;
   }
 
   .post-item:hover {
-    transform: translateY(-3px);
-    border-color: transparent;
-    box-shadow: 0 12px 32px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
-  }
-
-  .post-item:hover::before {
-    opacity: 1;
-    animation: postSpin 4s linear infinite;
-  }
-
-  .post-item:hover::after {
-    opacity: 0.6;
+    text-decoration: none;
   }
 
   .post-item__meta {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--text-tertiary);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
   }
 
   .post-item__title {
     font-size: 1.125rem;
     color: var(--text-primary);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
     transition: color var(--transition-fast);
   }
 
   .post-item:hover .post-item__title {
-    color: var(--accent-blue);
+    color: var(--accent);
   }
 
   .post-item__desc {
     font-size: 0.9375rem;
     color: var(--text-secondary);
-    margin-bottom: var(--space-md);
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: var(--space-4xl);
-    color: var(--text-tertiary);
-  }
-
-  .empty-state__icon {
-    font-size: 2rem;
-    margin-bottom: var(--space-md);
+    margin-bottom: var(--space-sm);
   }
 
   .empty-state__text {
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
+    color: var(--text-tertiary);
   }
 </style>

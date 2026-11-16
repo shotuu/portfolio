@@ -10,18 +10,15 @@ const other = projects.filter(p => !p.featured);
   <section class="section">
     <div class="container">
       <h1>Projects</h1>
-      <p class="page-subtitle">I love building things. Here are some of them.</p>
+      <p class="page-subtitle">The bigger things I've built, then the smaller ones.</p>
 
       {featured.length > 0 && (
         <div class="project-section">
-          <h3 class="project-section__title">Featured</h3>
+          <h2 class="project-section__title">Main projects</h2>
           <div class="projects-grid">
             {featured.map(project => (
               <div class="card project-card project-card--featured">
-                <div class="project-card__header">
-                  <h3 class="card__title">{project.title}</h3>
-                  {project.featured && <span class="badge badge--accent">Featured</span>}
-                </div>
+                <h3 class="card__title">{project.title}</h3>
                 <p class="card__description">{project.description}</p>
                 <div class="card__tags">
                   {project.tags.map(tag => <span class="badge">{tag}</span>)}
@@ -29,12 +26,12 @@ const other = projects.filter(p => !p.featured);
                 <div class="project-card__links">
                   {project.github && (
                     <a href={project.github} class="project-link" target="_blank" rel="noopener">
-                      GitHub &nearr;
+                      Code &nearr;
                     </a>
                   )}
                   {project.link && project.link !== '#' && (
                     <a href={project.link} class="project-link" target="_blank" rel="noopener">
-                      Live Demo &nearr;
+                      Site &nearr;
                     </a>
                   )}
                 </div>
@@ -46,7 +43,7 @@ const other = projects.filter(p => !p.featured);
 
       {other.length > 0 && (
         <div class="project-section">
-          <h3 class="project-section__title">Other Projects</h3>
+          <h2 class="project-section__title">Smaller things</h2>
           <div class="projects-grid">
             {other.map(project => (
               <div class="card project-card project-card--other">
@@ -58,7 +55,7 @@ const other = projects.filter(p => !p.featured);
                 <div class="project-card__links">
                   {project.github && (
                     <a href={project.github} class="project-link" target="_blank" rel="noopener">
-                      GitHub &nearr;
+                      Code &nearr;
                     </a>
                   )}
                 </div>
@@ -84,60 +81,42 @@ const other = projects.filter(p => !p.featured);
 
   .project-section__title {
     font-family: var(--font-mono);
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0;
     color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     margin-bottom: var(--space-lg);
   }
 
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: var(--space-lg);
+    gap: var(--space-md);
   }
 
-  .project-card__header {
+  .project-card {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-sm);
+    flex-direction: column;
   }
 
-  .project-card--featured {
-    border-color: var(--accent-blue-soft);
-  }
-
-  /* Not featured shouldn't mean invisible: a visible (if quieter) border and
-     a slightly lifted background keep these from disappearing into the page
-     at rest, while the neutral (rather than blue) hover glow keeps them
-     read as secondary to the featured cards. */
   .project-card--other {
-    border-color: var(--border);
     background: var(--bg-secondary);
-    --card-accent: var(--text-tertiary);
-    --card-accent-soft: var(--bg-tertiary);
-    --card-accent-glow: var(--accent-neutral-glow);
+    border-color: var(--border-light);
+  }
+
+  .project-card .card__tags {
+    margin-top: auto;
   }
 
   .project-card__links {
     display: flex;
     gap: var(--space-md);
-    margin-top: var(--space-lg);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--border-light);
+    margin-top: var(--space-md);
   }
 
   .project-link {
     font-family: var(--font-mono);
     font-size: 0.8125rem;
-    color: var(--text-tertiary);
-    transition: color var(--transition-fast);
-  }
-
-  .project-link:hover {
-    color: var(--accent-blue);
   }
 
   @media (max-width: 640px) {

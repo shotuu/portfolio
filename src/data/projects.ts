@@ -1,6 +1,8 @@
 export interface Project {
   title: string;
   description: string;
+  /** One-line version of the description, shown in the homepage list. */
+  summary?: string;
   tags: string[];
   link?: string;
   github?: string;
@@ -10,27 +12,31 @@ export interface Project {
 export const projects: Project[] = [
   {
     title: 'Telos',
-    description: 'A precision protocol tracker for people who take their regimens seriously. Telos builds dosing stacks from a 43+ compound reference library, handles reconstitution and syringe-draw math automatically, and pairs it with an AI research assistant that answers questions with cited sources. Offline-first PWA — your data lives on-device first and syncs when you sign in.',
+    summary: 'A protocol tracker that does the dosing and reconstitution math for you, with a cited AI research assistant.',
+    description: 'A precision protocol tracker for people who take their regimens seriously. Telos builds dosing stacks from a 43+ compound reference library, handles reconstitution and syringe-draw math automatically, and pairs it with an AI research assistant that answers questions with cited sources. Offline-first PWA: your data lives on-device first and syncs when you sign in.',
     tags: ['React', 'Vite', 'Node.js', 'Express', 'Prisma', 'PostgreSQL', 'Claude API', 'PWA'],
     link: 'https://telostrack.com',
     featured: true,
   },
   {
     title: 'Synth',
-    description: 'A privacy-first, context-aware meeting and note-taking assistant (a fork of Meetily). Synth transcribes meetings, lectures, and conversations fully on-device with real speaker diarization, then generates AI summaries shaped to what you were doing — a meeting, a lecture, or a study group — with no audio or transcript ever leaving your machine unless you opt into a cloud provider.',
+    summary: 'A meeting and lecture note-taker that transcribes and summarizes entirely on your own machine.',
+    description: 'A privacy-first, context-aware meeting and note-taking assistant (a fork of Meetily). Synth transcribes meetings, lectures, and conversations fully on-device with real speaker diarization, then generates AI summaries shaped to what you were doing (a meeting, a lecture, or a study group), with no audio or transcript ever leaving your machine unless you opt into a cloud provider.',
     tags: ['Rust', 'Tauri 2', 'Next.js', 'TypeScript', 'Whisper.cpp', 'ONNX', 'SQLite'],
     github: 'https://github.com/shotuu/synth',
     featured: true,
   },
   {
     title: 'Hatch',
-    description: 'A group-chat planning prototype built at LA Hacks 2026. Hatch gives a friend group\'s chat a living "nest" that cools during silence and warms up when the group books a plan together — synthesizing event suggestions, running group approval, and writing confirmed plans to everyone\'s Google Calendar.',
+    summary: 'A group-chat planner built at LA Hacks 2026 that turns "we should hang out" into a calendar event.',
+    description: 'A group-chat planning prototype built at LA Hacks 2026. Hatch gives a friend group\'s chat a living "nest" that cools during silence and warms up when the group books a plan together, synthesizing event suggestions, running group approval, and writing confirmed plans to everyone\'s Google Calendar.',
     tags: ['Python', 'FastAPI', 'LangGraph', 'Fetch.ai uAgents', 'React', 'TypeScript', 'LA Hacks 2026'],
     github: 'https://github.com/shotuu/hatch',
     featured: true,
   },
   {
     title: 'Meadow',
+    summary: 'A personal finance app that syncs US, EU and Singapore bank accounts and shows where the money goes.',
     description: 'A personal finance app that answers where the money actually goes. Syncs transactions automatically from US/EU banks via Plaid, Singapore banks via Finverse, and brokerage holdings via IBKR Flex Query, then categorizes them with rule-based matching that learns from corrections plus a Gemini AI fallback. Three budgeting modes (monthly reset, rollover envelopes, sinking funds) run on one shared engine, with net worth, recurring-charge detection, and a real installable PWA.',
     tags: ['Next.js', 'TypeScript', 'Prisma', 'PostgreSQL', 'Plaid', 'Tailwind CSS', 'PWA'],
     github: 'https://github.com/shotuu/meadow',
@@ -59,7 +65,7 @@ export const projects: Project[] = [
   },
   {
     title: 'Pulse',
-    description: 'A live file tree for watching a repo change in real time — every add, edit, delete, and rename since your last commit, rendered the instant it happens. Built for watching AI coding agents work through a codebase, with a scrollable, syntax-highlighted diff view and a one-command installer.',
+    description: 'A live file tree for watching a repo change in real time: every add, edit, delete, and rename since your last commit, rendered the instant it happens. Built for watching AI coding agents work through a codebase, with a scrollable, syntax-highlighted diff view and a one-command installer.',
     tags: ['Node.js', 'React', 'Ink', 'Chokidar', 'CLI'],
     github: 'https://github.com/shotuu/pulse',
     featured: false,

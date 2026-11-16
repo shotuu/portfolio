@@ -1,45 +1,48 @@
 /* ========================================
-   Daniel Wu Portfolio — Design System
-   Clean minimal monochrome + accent colors
+   Daniel Wu Portfolio - Design System
+   Warm neutrals, one link accent, no glow
    ======================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* --- CSS Custom Properties --- */
 :root {
-  /* Colors — Light Mode */
-  --bg-primary: #fafafa;
-  --bg-secondary: #f0f0f0;
-  --bg-tertiary: #e5e5e5;
-  --text-primary: #1a1a1a;
-  --text-secondary: #525252;
-  --text-tertiary: #a3a3a3;
-  --border: #d4d4d4;
-  --border-light: #e5e5e5;
+  /* Colors - Light Mode (warm paper neutrals) */
+  --bg-primary: #f6f5f1;
+  --bg-secondary: #eeece6;
+  --bg-tertiary: #e3e0d8;
+  --text-primary: #1c1b19;
+  --text-secondary: #55524b;
+  --text-tertiary: #7a766d;
+  --border: #d3cfc5;
+  --border-light: #e3e0d8;
 
-  /* Accent Colors */
+  /* The one accent used for UI (links, focus, selection) */
+  --accent: #2b59c3;
+
+  /* Figure/accent palette. Blog post SVG figures depend on these names. */
   --accent-blue: #2563eb;
   --accent-blue-soft: #dbeafe;
   --accent-blue-glow: rgba(37, 99, 235, 0.25);
-  --accent-orange: #f97316;
-  --accent-orange-soft: #fff7ed;
-  --accent-orange-glow: rgba(249, 115, 22, 0.25);
-  --accent-emerald: #10b981;
-  --accent-emerald-soft: #d1fae5;
-  --accent-emerald-glow: rgba(16, 185, 129, 0.25);
+  --accent-orange: #ea6a12;
+  --accent-orange-soft: #fdf0e3;
+  --accent-orange-glow: rgba(234, 106, 18, 0.25);
+  --accent-emerald: #0f9f6e;
+  --accent-emerald-soft: #d6f3e6;
+  --accent-emerald-glow: rgba(15, 159, 110, 0.25);
   --accent-violet: #7c3aed;
   --accent-violet-soft: #ede9fe;
   --accent-violet-glow: rgba(124, 58, 237, 0.25);
   --accent-neutral-glow: rgba(82, 82, 82, 0.16);
 
   /* Points/Gamification */
-  --points-color: #f97316;
-  --points-glow: rgba(249, 115, 22, 0.3);
-  --unlock-color: #10b981;
+  --points-color: #ea6a12;
+  --points-glow: rgba(234, 106, 18, 0.3);
+  --unlock-color: #0f9f6e;
 
   /* Typography */
-  --font-display: 'Outfit', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   /* Spacing */
@@ -68,29 +71,31 @@
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
 
   /* Border Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   --radius-full: 9999px;
 }
 
 /* --- Dark Mode --- */
 [data-theme="dark"] {
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #171717;
-  --bg-tertiary: #262626;
-  --text-primary: #e5e5e5;
-  --text-secondary: #a3a3a3;
-  --text-tertiary: #525252;
-  --border: #404040;
-  --border-light: #2a2a2a;
+  --bg-primary: #121211;
+  --bg-secondary: #1a1917;
+  --bg-tertiary: #252421;
+  --text-primary: #ebe8e1;
+  --text-secondary: #a9a59c;
+  --text-tertiary: #7b776f;
+  --border: #36342f;
+  --border-light: #262521;
+
+  --accent: #8eaaf0;
 
   --accent-blue-soft: #1e3a5f;
   --accent-blue-glow: rgba(37, 99, 235, 0.35);
   --accent-orange-soft: #431407;
-  --accent-orange-glow: rgba(249, 115, 22, 0.35);
+  --accent-orange-glow: rgba(234, 106, 18, 0.35);
   --accent-emerald-soft: #064e3b;
-  --accent-emerald-glow: rgba(16, 185, 129, 0.35);
+  --accent-emerald-glow: rgba(15, 159, 110, 0.35);
   --accent-violet-soft: #2e1065;
   --accent-violet-glow: rgba(124, 58, 237, 0.35);
   --accent-neutral-glow: rgba(163, 163, 163, 0.2);
@@ -143,15 +148,15 @@ html.theme-switching *::after {
 /* --- Typography --- */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
   color: var(--text-primary);
 }
 
-h1 { font-size: clamp(2.5rem, 6vw, 4rem); }
-h2 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
-h3 { font-size: clamp(1.25rem, 3vw, 1.5rem); }
+h1 { font-size: clamp(2.25rem, 5vw, 3.25rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 1.875rem); }
+h3 { font-size: 1.25rem; }
 h4 { font-size: 1.125rem; }
 
 p {
@@ -160,13 +165,19 @@ p {
 }
 
 a {
-  color: var(--accent-blue);
+  color: var(--accent);
   text-decoration: none;
+  text-underline-offset: 0.2em;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--accent-violet);
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 code {
@@ -227,120 +238,28 @@ img {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 500;
-  padding: 0.25em 0.75em;
-  border-radius: var(--radius-full);
-  border: 1px solid var(--border);
+  padding: 0.15em 0.5em;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   background: var(--bg-secondary);
-  transition: all var(--transition-fast);
-}
-
-.badge--accent {
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-  background: var(--accent-blue-soft);
-}
-
-.badge--orange {
-  border-color: var(--accent-orange);
-  color: var(--accent-orange);
-  background: var(--accent-orange-soft);
-}
-
-.badge--emerald {
-  border-color: var(--accent-emerald);
-  color: var(--accent-emerald);
-  background: var(--accent-emerald-soft);
-}
-
-.badge--violet {
-  border-color: var(--accent-violet);
-  color: var(--accent-violet);
-  background: var(--accent-violet-soft);
-}
-
-/* Shared glow animation for cards */
-@property --glow-angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-
-@keyframes glowSpin {
-  to { --glow-angle: 360deg; }
 }
 
 .card {
-  --card-accent: var(--accent-blue);
-  --card-accent-soft: var(--accent-blue-soft);
-  --card-accent-glow: var(--accent-blue-glow);
   position: relative;
-  isolation: isolate;
   background: var(--bg-primary);
-  border: 1px solid var(--border-light);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
-  overflow: hidden;
-  transition: transform var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
-}
-
-/* Spinning gradient border */
-.card::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: conic-gradient(
-    from var(--glow-angle, 0deg),
-    var(--card-accent),
-    transparent 25%,
-    transparent 75%,
-    var(--card-accent)
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  opacity: 0;
-  transition: opacity var(--transition-base);
-  pointer-events: none;
-}
-
-/* Soft radial glow */
-.card::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 50%;
-  aspect-ratio: 1;
-  background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
-  transform: translate(-20%, -50%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--transition-base);
-  z-index: -1;
+  transition: border-color var(--transition-fast);
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  border-color: transparent;
-  box-shadow: 0 12px 32px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
-}
-
-.card:hover::before {
-  opacity: 1;
-  animation: glowSpin 4s linear infinite;
-}
-
-.card:hover::after {
-  opacity: 0.6;
+  border-color: var(--text-tertiary);
 }
 
 .card__title {
   font-size: 1.125rem;
+  font-weight: 600;
   margin-bottom: var(--space-sm);
 }
 
@@ -360,16 +279,16 @@ img {
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.625rem 1.25rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg-primary);
   color: var(--text-primary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform 80ms ease;
   text-decoration: none;
 }
 
@@ -377,6 +296,11 @@ img {
   background: var(--bg-secondary);
   border-color: var(--text-tertiary);
   color: var(--text-primary);
+  text-decoration: none;
+}
+
+.btn:active {
+  transform: translateY(1px);
 }
 
 .btn--primary {
@@ -386,18 +310,9 @@ img {
 }
 
 .btn--primary:hover {
-  opacity: 0.85;
+  background: var(--text-secondary);
+  border-color: var(--text-secondary);
   color: var(--bg-primary);
-}
-
-/* --- Page transitions --- */
-main {
-  animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- Prose (blog/CTF content) --- */
@@ -431,7 +346,7 @@ main {
 }
 
 .prose blockquote {
-  border-left: 3px solid var(--accent-blue);
+  border-left: 2px solid var(--border);
   padding-left: var(--space-lg);
   margin-bottom: var(--space-lg);
   color: var(--text-secondary);
@@ -469,8 +384,8 @@ main {
 
 /* --- Selection --- */
 ::selection {
-  background: var(--accent-blue);
-  color: white;
+  background: var(--accent);
+  color: var(--bg-primary);
 }
 
 /* --- Responsive --- */
@@ -484,7 +399,7 @@ main {
   }
 
   h1 { font-size: 2rem; }
-  h2 { font-size: 1.5rem; }
+  h2 { font-size: 1.375rem; }
 }
 
 @media (max-width: 480px) {

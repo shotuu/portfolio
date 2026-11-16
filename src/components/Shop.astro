@@ -191,9 +191,6 @@
   }
 
   .shop-item {
-    --card-accent: var(--points-color);
-    --card-accent-soft: var(--accent-orange-soft);
-    --card-accent-glow: var(--accent-orange-glow);
     position: relative;
     isolation: isolate;
     display: flex;
@@ -211,57 +208,8 @@
     color: var(--text-primary);
   }
 
-  .shop-item::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1.5px;
-    background: conic-gradient(
-      from var(--glow-angle, 0deg),
-      var(--card-accent),
-      transparent 25%,
-      transparent 75%,
-      var(--card-accent)
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-    pointer-events: none;
-  }
-
-  .shop-item::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 40%;
-    aspect-ratio: 1;
-    background: radial-gradient(circle, var(--card-accent-soft), transparent 60%);
-    transform: translate(-20%, -50%);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-    z-index: -1;
-  }
-
   .shop-item:hover:not(.purchased) {
-    transform: translateY(-2px);
-    border-color: transparent;
-    box-shadow: 0 8px 24px -4px var(--card-accent-glow), 0 0 0 1px var(--card-accent);
-  }
-
-  .shop-item:hover:not(.purchased)::before {
-    opacity: 1;
-    animation: glowSpin 4s linear infinite;
-  }
-
-  .shop-item:hover:not(.purchased)::after {
-    opacity: 0.5;
+    border-color: var(--text-tertiary);
   }
 
   .shop-item.purchased {
@@ -278,7 +226,7 @@
 
   .shop-item.purchased.effect-on:hover,
   .shop-item.purchased.effect-off:hover {
-    border-color: var(--accent-blue);
+    border-color: var(--accent);
     background: var(--bg-primary);
   }
 
