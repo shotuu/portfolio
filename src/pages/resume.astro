@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SkillsTree from '../components/SkillsTree.astro';
 ---
 
 <BaseLayout title="Resume">
@@ -319,84 +320,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       </div>
 
-      <!-- Skills -->
+      <!-- Skills (shared with the homepage) -->
       <div class="skills-section">
-        <h2 class="skills-title">Technical Skills</h2>
-        <div class="skills-grid">
-          <div class="skill-category">
-            <h4 class="skill-category__label">Languages</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">Python</span>
-              <span class="skill-tag">C++</span>
-              <span class="skill-tag">JavaScript/TypeScript</span>
-              <span class="skill-tag">Swift</span>
-              <span class="skill-tag">SQL</span>
-              <span class="skill-tag">Bash</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h4 class="skill-category__label">Frameworks</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">React</span>
-              <span class="skill-tag">Node.js</span>
-              <span class="skill-tag">Flask</span>
-              <span class="skill-tag">FastAPI</span>
-              <span class="skill-tag">SwiftUI</span>
-              <span class="skill-tag">Firebase/Firestore</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h4 class="skill-category__label">Cloud & DevOps</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">GCP (Cloud Run, GKE, Cloud SQL)</span>
-              <span class="skill-tag">Kubernetes</span>
-              <span class="skill-tag">Docker</span>
-              <span class="skill-tag">Helm</span>
-              <span class="skill-tag">GitHub Actions</span>
-              <span class="skill-tag">Traefik</span>
-              <span class="skill-tag">cert-manager</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h4 class="skill-category__label">Developer Tools</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">Linux</span>
-              <span class="skill-tag">Git</span>
-              <span class="skill-tag">VS Code</span>
-              <span class="skill-tag">Xcode</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h4 class="skill-category__label">Security / Networking</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">Cryptography</span>
-              <span class="skill-tag">Wireshark</span>
-              <span class="skill-tag">Scapy</span>
-              <span class="skill-tag">nmap</span>
-              <span class="skill-tag">Volatility</span>
-              <span class="skill-tag">Pen Testing</span>
-              <span class="skill-tag">ICS/OT</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h4 class="skill-category__label">Data / ML</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">TensorFlow</span>
-              <span class="skill-tag">OpenCV</span>
-              <span class="skill-tag">pandas</span>
-              <span class="skill-tag">NumPy</span>
-              <span class="skill-tag">scikit-learn</span>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h4 class="skill-category__label">Hardware</h4>
-            <div class="skill-tags">
-              <span class="skill-tag">Arduino</span>
-              <span class="skill-tag">Sensors</span>
-              <span class="skill-tag">Breadboard Wiring</span>
-            </div>
-          </div>
-        </div>
+        <h2 class="skills-title">Skills</h2>
+        <SkillsTree />
       </div>
 
     </div>
@@ -616,46 +543,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   /* Skills section */
   .skills-section {
     margin-top: var(--space-4xl);
-    padding-top: var(--space-3xl);
-    border-top: 2px solid var(--border);
   }
 
   .skills-title {
     font-size: 1.25rem;
-    margin-bottom: var(--space-2xl);
+    margin-bottom: var(--space-lg);
   }
-
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-xl);
-  }
-
-  .skill-category__label {
-    font-size: 0.8125rem;
-    font-family: var(--font-mono);
-    color: var(--text-tertiary);
-    margin-bottom: var(--space-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-  }
-
-  .skill-tag {
-    font-size: 0.8125rem;
-    padding: 4px 10px;
-    border-radius: var(--radius-sm);
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-light);
-    color: var(--text-secondary);
-    transition: border-color 0.2s ease, color 0.2s ease;
-  }
-
 
   /* Mobile */
   @media (max-width: 768px) {
@@ -681,9 +574,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       align-items: flex-start;
     }
 
-    .skills-grid {
-      grid-template-columns: 1fr 1fr;
-    }
   }
 </style>
 

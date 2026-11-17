@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { projects } from '../data/projects';
+import SkillsTree from '../components/SkillsTree.astro';
 
 const featuredProjects = projects.filter(p => p.featured);
 
@@ -14,77 +15,6 @@ const recentPosts = allPosts
 const formatDate = (date: string) =>
   new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
-// Ordered strongest first. Each row lists only tools used in real work. `sources`
-// is the "where" behind the row, revealed as a tree when the row is expanded, so every
-// line is something I can back up in an interview.
-interface SkillSource {
-  place: string;
-  tools: string;
-}
-
-interface SkillGroup {
-  label: string;
-  /** Directory-style name shown in the tree's `$ tree <dir>/` prompt line. */
-  dir: string;
-  items: string[];
-  sources: SkillSource[];
-}
-
-const skills: SkillGroup[] = [
-  {
-    label: 'Languages',
-    dir: 'languages',
-    items: ['Python', 'TypeScript', 'JavaScript', 'SQL', 'C++', 'Bash'],
-    sources: [
-      { place: 'DIS intel pipeline', tools: 'Python' },
-      { place: 'Hatch', tools: 'Python, TypeScript' },
-      { place: 'Meadow', tools: 'TypeScript, SQL' },
-      { place: 'Synth', tools: 'TypeScript' },
-      { place: 'Telos', tools: 'JavaScript, SQL' },
-      { place: 'UCLA coursework', tools: 'C++, Bash' },
-    ],
-  },
-  {
-    label: 'Web & apps',
-    dir: 'web',
-    items: ['React', 'Next.js', 'Node.js', 'FastAPI', 'PostgreSQL', 'Prisma'],
-    sources: [
-      { place: 'Telos', tools: 'React, Node.js, PostgreSQL, Prisma' },
-      { place: 'Meadow', tools: 'Next.js, PostgreSQL, Prisma' },
-      { place: 'Hatch', tools: 'React, FastAPI' },
-    ],
-  },
-  {
-    label: 'Cloud & infra',
-    dir: 'infra',
-    items: ['GCP', 'Kubernetes', 'Docker', 'GitHub Actions', 'Linux'],
-    sources: [
-      { place: 'LA CTF', tools: 'GCP, Kubernetes, Docker, GitHub Actions' },
-      { place: 'Officer cadet training', tools: 'Linux' },
-    ],
-  },
-  {
-    label: 'Security',
-    dir: 'security',
-    items: ['OSINT', 'MITRE ATT&CK', 'Wireshark', 'nmap', 'Scapy', 'Volatility'],
-    sources: [
-      { place: 'DIS threat intel', tools: 'OSINT, MITRE ATT&CK' },
-      { place: 'Officer cadet training', tools: 'Wireshark, nmap, Scapy, Volatility' },
-    ],
-  },
-  {
-    label: 'AI & data',
-    dir: 'ai',
-    items: ['LLM APIs', 'Whisper', 'OpenCV', 'TensorFlow'],
-    sources: [
-      { place: 'DIS intel pipeline', tools: 'LLM parsing' },
-      { place: 'Telos', tools: 'Claude API' },
-      { place: 'Meadow', tools: 'Gemini API' },
-      { place: 'Synth', tools: 'Whisper' },
-      { place: 'NUS research', tools: 'OpenCV, TensorFlow' },
-    ],
-  },
-];
 ---
 
 <BaseLayout title="Home">
@@ -185,29 +115,7 @@ const skills: SkillGroup[] = [
   <section class="section">
     <div class="container">
       <h2 class="section-heading">Skills</h2>
-      <div class="skills">
-        {skills.map(group => (
-          <details class="skills__row">
-            <summary class="skills__summary">
-              <span class="skills__label">{group.label}</span>
-              <span class="skills__items">{group.items.join(', ')}</span>
-              <span class="skills__toggle" aria-hidden="true"></span>
-            </summary>
-            <div class="skills__tree">
-              <p class="skills__cmd"><span class="skills__prompt">$</span> tree {group.dir}/</p>
-              <ul>
-                {group.sources.map((source, i) => (
-                  <li>
-                    <span class="skills__branch" aria-hidden="true">{i === group.sources.length - 1 ? '└── ' : '├── '}</span>
-                    <span class="skills__place">{source.place}</span>
-                    <span class="skills__tools">{source.tools}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </details>
-        ))}
-      </div>
+      <SkillsTree />
     </div>
   </section>
 
@@ -406,103 +314,6 @@ const skills: SkillGroup[] = [
     color: var(--text-tertiary);
   }
 
-  /* Skills: each row expands into a `tree`-style list of where the skills came from */
-  .skills__row {
-    border-bottom: 1px solid var(--border-light);
-  }
-
-  .skills__row:first-child {
-    border-top: 1px solid var(--border-light);
-  }
-
-  .skills__summary {
-    display: grid;
-    grid-template-columns: 9rem 1fr auto;
-    gap: var(--space-md);
-    align-items: baseline;
-    padding: var(--space-md) 0;
-    cursor: pointer;
-    list-style: none;
-  }
-
-  .skills__summary::-webkit-details-marker {
-    display: none;
-  }
-
-  .skills__label {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--text-tertiary);
-  }
-
-  .skills__items {
-    color: var(--text-primary);
-  }
-
-  .skills__toggle {
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    color: var(--text-tertiary);
-    transition: color var(--transition-fast);
-  }
-
-  .skills__toggle::before {
-    content: '[+]';
-  }
-
-  .skills__row[open] .skills__toggle::before {
-    content: '[-]';
-  }
-
-  .skills__summary:hover .skills__toggle,
-  .skills__row[open] .skills__toggle {
-    color: var(--accent);
-  }
-
-  .skills__tree {
-    margin: 0 0 var(--space-md) calc(9rem + var(--space-md));
-    padding: var(--space-sm) var(--space-md);
-    background: var(--bg-secondary);
-    border-radius: var(--radius-md);
-    font-family: var(--font-mono);
-    font-size: 0.8125rem;
-    line-height: 1.8;
-  }
-
-  .skills__cmd {
-    color: var(--text-tertiary);
-    max-width: none;
-  }
-
-  .skills__prompt {
-    color: var(--accent);
-  }
-
-  .skills__tree ul {
-    list-style: none;
-  }
-
-  .skills__tree li {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 0.75ch;
-  }
-
-  .skills__branch {
-    color: var(--text-tertiary);
-    white-space: pre;
-  }
-
-  .skills__place {
-    color: var(--text-primary);
-    /* Wide enough for the longest place name, so the tools line up in a column like real tree output */
-    min-width: 23ch;
-  }
-
-  .skills__tools {
-    color: var(--text-tertiary);
-  }
-
   /* Music */
   .music-sub {
     margin-bottom: var(--space-lg);
@@ -521,23 +332,6 @@ const skills: SkillGroup[] = [
 
     .hero-tagline {
       font-size: 1.125rem;
-    }
-
-    .skills__summary {
-      grid-template-columns: 1fr auto;
-      row-gap: var(--space-xs);
-    }
-
-    .skills__label {
-      grid-column: 1 / -1;
-    }
-
-    .skills__tree {
-      margin-left: 0;
-    }
-
-    .skills__place {
-      min-width: 0;
     }
   }
 </style>

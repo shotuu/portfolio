@@ -1,0 +1,151 @@
+---
+// Skills list shared by the homepage and the resume. Each row expands into a
+// `tree`-style list of where those skills were used (data in src/data/skills.ts).
+import { skills } from '../data/skills';
+---
+
+<div class="skills">
+  {skills.map(group => (
+    <details class="skills__row">
+      <summary class="skills__summary">
+        <span class="skills__label">{group.label}</span>
+        <span class="skills__items">{group.items.join(', ')}</span>
+        <span class="skills__toggle" aria-hidden="true"></span>
+      </summary>
+      <div class="skills__tree">
+        <p class="skills__cmd"><span class="skills__prompt">$</span> tree {group.dir}/</p>
+        <ul>
+          {group.sources.map((source, i) => (
+            <li>
+              <span class="skills__branch" aria-hidden="true">{i === group.sources.length - 1 ? '└── ' : '├── '}</span>
+              <span class="skills__place">{source.place}</span>
+              <span class="skills__tools">{source.tools}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </details>
+  ))}
+</div>
+
+<style>
+  /* Skills: each row expands into a `tree`-style list of where the skills came from */
+  .skills__row {
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .skills__row:first-child {
+    border-top: 1px solid var(--border-light);
+  }
+
+  .skills__summary {
+    display: grid;
+    grid-template-columns: 9rem 1fr auto;
+    gap: var(--space-md);
+    align-items: baseline;
+    padding: var(--space-md) 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .skills__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .skills__label {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+  }
+
+  .skills__items {
+    color: var(--text-primary);
+  }
+
+  .skills__toggle {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    transition: color var(--transition-fast);
+  }
+
+  .skills__toggle::before {
+    content: '[+]';
+  }
+
+  .skills__row[open] .skills__toggle::before {
+    content: '[-]';
+  }
+
+  .skills__summary:hover .skills__toggle,
+  .skills__row[open] .skills__toggle {
+    color: var(--accent);
+  }
+
+  .skills__tree {
+    margin: 0 0 var(--space-md) calc(9rem + var(--space-md));
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.8;
+  }
+
+  .skills__cmd {
+    color: var(--text-tertiary);
+    max-width: none;
+  }
+
+  .skills__prompt {
+    color: var(--accent);
+  }
+
+  .skills__tree ul {
+    list-style: none;
+  }
+
+  /* Fixed columns (branch, place, tools) so long place names never push tools to a new line */
+  .skills__tree li {
+    display: grid;
+    grid-template-columns: auto 23ch 1fr;
+    column-gap: 0.75ch;
+  }
+
+  .skills__branch {
+    color: var(--text-tertiary);
+    white-space: pre;
+  }
+
+  .skills__place {
+    color: var(--text-primary);
+  }
+
+  .skills__tools {
+    color: var(--text-tertiary);
+  }
+
+  @media (max-width: 480px) {
+    .skills__summary {
+      grid-template-columns: 1fr auto;
+      row-gap: var(--space-xs);
+    }
+
+    .skills__label {
+      grid-column: 1 / -1;
+    }
+
+    .skills__tree {
+      margin-left: 0;
+    }
+
+    /* Phones: tools go on their own line, indented under the place name */
+    .skills__tree li {
+      grid-template-columns: auto 1fr;
+    }
+
+    .skills__tools {
+      grid-column: 2;
+    }
+  }
+</style>
