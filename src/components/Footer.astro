@@ -10,7 +10,10 @@ const year = new Date().getFullYear();
         <span class="footer-sep">/</span>
         <span class="footer-year">{year}</span>
       </p>
-      <p class="footer-sub">Shipped from Los Angeles &#127796;</p>
+      <p class="footer-sub">
+        Shipped from Los Angeles &#127796; <span class="footer-sep">/</span>
+        <a href="/.well-known/security.txt" class="footer-link">security.txt</a>
+      </p>
     </div>
   </div>
 </footer>
@@ -44,6 +47,15 @@ const year = new Date().getFullYear();
 
   .footer-sep {
     color: var(--border);
+  }
+
+  .footer-link {
+    font-family: var(--font-mono);
+    color: var(--text-tertiary);
+  }
+
+  .footer-link:hover {
+    color: var(--accent);
   }
 
   .footer-sub {

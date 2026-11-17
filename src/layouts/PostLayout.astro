@@ -35,7 +35,7 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('en-US', {
         {frontmatter.tags && (
           <div class="post-tags">
             {frontmatter.tags.map((tag: string) => (
-              <span class="badge">{tag}</span>
+              <a href={`/blog?tag=${encodeURIComponent(tag)}`} class="badge post-tag">{tag}</a>
             ))}
           </div>
         )}
@@ -84,6 +84,11 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('en-US', {
 
   .post-meta__separator {
     color: var(--border);
+  }
+
+  .post-tag:hover {
+    color: var(--accent);
+    text-decoration: none;
   }
 
   .post-tags {

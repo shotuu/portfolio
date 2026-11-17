@@ -222,6 +222,11 @@ const skills: { label: string; items: string[] }[] = [
     margin-bottom: var(--space-lg);
   }
 
+  .section-heading::before {
+    content: '> ';
+    color: var(--accent);
+  }
+
   .section-header {
     display: flex;
     align-items: baseline;

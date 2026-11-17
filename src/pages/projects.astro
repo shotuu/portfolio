@@ -88,6 +88,11 @@ const other = projects.filter(p => !p.featured);
     margin-bottom: var(--space-lg);
   }
 
+  .project-section__title::before {
+    content: '> ';
+    color: var(--accent);
+  }
+
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -120,7 +125,12 @@ const other = projects.filter(p => !p.featured);
   }
 
   @media (max-width: 640px) {
-    .projects-grid {
+    .project-section__title::before {
+    content: '> ';
+    color: var(--accent);
+  }
+
+  .projects-grid {
       grid-template-columns: 1fr;
     }
   }

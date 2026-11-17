@@ -6,6 +6,17 @@ const postModules = import.meta.glob('../../content/blog/*.md', { eager: true })
 const allPosts = Object.values(postModules) as any[];
 const posts = allPosts
   .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+// Every tag used by at least one post, most-used first, for the filter bar
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of (post.frontmatter.tags ?? []) as string[]) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const allTags = [...tagCounts.entries()]
+  .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+  .map(([tag]) => tag);
 ---
 
 <BaseLayout title="Blog">
@@ -21,9 +32,19 @@ const posts = allPosts
           <p class="empty-state__text">Nothing here yet.</p>
         </div>
       ) : (
+        <div class="tag-filter" role="group" aria-label="Filter posts by tag">
+          <button type="button" class="tag-filter__btn" data-tag="" aria-pressed="true">all</button>
+          {allTags.map(tag => (
+            <button type="button" class="tag-filter__btn" data-tag={tag} aria-pressed="false">{tag}</button>
+          ))}
+        </div>
         <div class="posts-list">
           {posts.map(post => (
-            <a href={`/blog/${post.frontmatter.slug}`} class="post-item">
+            <a
+              href={`/blog/${post.frontmatter.slug}`}
+              class="post-item"
+              data-tags={JSON.stringify(post.frontmatter.tags ?? [])}
+            >
               <div class="post-item__meta">
                 <time datetime={post.frontmatter.date}>
                   {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
@@ -52,11 +73,65 @@ const posts = allPosts
   </section>
 </BaseLayout>
 
+<script>
+  // Client-side tag filter. The active tag lives in ?tag= so post pages can link here pre-filtered.
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.tag-filter__btn'));
+  const postItems = Array.from(document.querySelectorAll<HTMLElement>('.post-item'));
+
+  function applyTagFilter(tag: string) {
+    const known = tag === '' || buttons.some(btn => btn.dataset.tag === tag);
+    const active = known ? tag : '';
+
+    buttons.forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.tag === active)));
+    postItems.forEach(item => {
+      const tags: string[] = JSON.parse(item.dataset.tags ?? '[]');
+      item.hidden = active !== '' && !tags.includes(active);
+    });
+
+    const url = new URL(window.location.href);
+    if (active) url.searchParams.set('tag', active);
+    else url.searchParams.delete('tag');
+    history.replaceState(null, '', url);
+  }
+
+  buttons.forEach(btn => btn.addEventListener('click', () => applyTagFilter(btn.dataset.tag ?? '')));
+  applyTagFilter(new URL(window.location.href).searchParams.get('tag') ?? '');
+</script>
+
 <style>
   .page-subtitle {
     margin-top: var(--space-sm);
     margin-bottom: var(--space-2xl);
     font-size: 1.0625rem;
+  }
+
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+  }
+
+  .tag-filter__btn {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    padding: 0.2em 0.65em;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .tag-filter__btn:hover {
+    border-color: var(--text-tertiary);
+    color: var(--text-primary);
+  }
+
+  .tag-filter__btn[aria-pressed="true"] {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .posts-list {
@@ -75,6 +150,11 @@ const posts = allPosts
 
   .post-item:hover {
     text-decoration: none;
+  }
+
+  /* display: block above would otherwise beat the hidden attribute */
+  .post-item[hidden] {
+    display: none;
   }
 
   .post-item__meta {

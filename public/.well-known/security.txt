@@ -1,0 +1,5 @@
+# Found a bug on this site? Email me, I'll take a look.
+Contact: mailto:wuscdaniel@ucla.edu
+Expires: 2027-11-16T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://danielwu.tech/.well-known/security.txt

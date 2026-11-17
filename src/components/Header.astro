@@ -1,5 +1,7 @@
 ---
 const currentPath = Astro.url.pathname;
+// Shown next to the logo like a shell prompt's working directory: "/" -> "~", "/blog/x/" -> "~/blog/x"
+const promptPath = '~' + currentPath.replace(/\/+$/, '');
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -15,6 +17,7 @@ const navLinks = [
     <a href="/" class="site-logo" aria-label="Home">
       <span class="site-logo__text">dw<span class="site-logo__dot">.</span></span>
     </a>
+    <span class="site-path" aria-hidden="true">{promptPath}</span>
 
     <div class="nav-links" id="nav-links">
       {navLinks.map(link => (
@@ -90,6 +93,17 @@ const navLinks = [
     color: var(--text-primary);
   }
 
+  .site-path {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-tertiary);
+    margin-left: var(--space-md);
+    margin-right: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .nav-links {
     display: flex;
     align-items: center;
@@ -159,6 +173,10 @@ const navLinks = [
   }
 
   @media (max-width: 768px) {
+    .site-path {
+      display: none;
+    }
+
     .nav-toggle {
       display: flex;
     }
