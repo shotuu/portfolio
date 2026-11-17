@@ -6,10 +6,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <section class="section">
     <div class="container">
       <div class="resume-header">
-        <div>
-          <h1>Resume</h1>
-          <p class="page-subtitle">Everything since high school, newest first.</p>
-        </div>
+        <h1>Resume</h1>
         <a href="/daniel_wu_cv.pdf" download class="btn btn--primary">Download PDF &darr;</a>
       </div>
 
@@ -409,16 +406,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <style>
   .resume-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: var(--space-lg);
     margin-bottom: var(--space-2xl);
     flex-wrap: wrap;
-  }
-
-  .page-subtitle {
-    margin-top: var(--space-sm);
-    font-size: 1.0625rem;
   }
 
   /* Filter tabs */
